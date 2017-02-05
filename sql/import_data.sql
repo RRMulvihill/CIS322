@@ -1,0 +1,24 @@
+begin;
+INSERT INTO products (product_pk, vendor, description, alt_description) VALUES (1,'big m large', '1L h2O', 'H2O vergeze spring fed');
+INSERT INTO products (product_pk, vendor, description, alt_description) VALUES (2, 'Dunder Mifflin', 'notepad', 'LOST legal size notepad');
+INSERT INTO products (product_pk, vendor, description, alt_description) VALUES (3, 'stark industries', 'unobtainium', '');
+INSERT INTO products (product_pk, vendor, description, alt_description) VALUES (4, 'wyatt oil', 'fuel', 'diesel');
+INSERT INTO products (product_pk, vendor, description, alt_description) VALUES (5, 'big n large', 'notepad', 'LOST legal size notepad');
+
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (6,NULL,'CA15467287', 'Olivin basalt','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (7,NULL,'CA15467288','Anorthosite','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (8,NULL,'CA15467289','breccias','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (9,NULL,'CA15467290','breccias','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (10,1,'MB2222761','1 L H20 x1872','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (11,NULL,'MB2222762','2 L H20 x1872','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (12,NULL,'CA15467295','50 mm film','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (13,NULL,'CA15467296','Atari ET video game cartridge','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (14,NULL,'DC15467299','Red Lion','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (15,NULL,'DC15467300','Green Lion','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (16,NULL,'DC15467301','Blue Lion','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (17,NULL,'DC15467302','Yellow Lion','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (18,2,'CA15467291','notepad','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (19,1,'CA15467292','H2O','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (20,NULL,'CA15467293','Zapper','');
+INSERT INTO assets (assets_pk, product_fk,asset_tag,description, alt_description) VALUES (21,NULL,'CA15467294','XJ 3000 scanner','');
+end;
