@@ -3,7 +3,7 @@ from config import dbname, dbhost, dbport
 
 app = Flask(__name__)
 
-@app.route('/login')
+@app.route('/')
 def login():
     return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
 
