@@ -3,13 +3,15 @@ from config import dbname, dbhost, dbport
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return render_template('data.html')
-
 @app.route('/login')
 def login():
     return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
+
+@app.route('/data')
+def data():
+    return render_template('data.html')
+
+
 
 @app.route('/logout')
 def logout():
