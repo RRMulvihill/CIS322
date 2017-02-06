@@ -3,14 +3,6 @@ from config import dbname, dbhost, dbport
 
 app = Flask(__name__)
 
-class user:
-    def __init__(self):
-        self.user = ''
-    def setUser(self,user):
-        self.user = user
-    def getuser(self):
-        return self.user
-
 @app.route('/')
 def login():
     return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
