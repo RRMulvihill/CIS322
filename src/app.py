@@ -7,12 +7,20 @@ app = Flask(__name__)
 def login():
     return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
 
-@app.route('/data')
-def data():
-    return render_template('data.html')
+@app.route('/report')
+def report():
+    return render_template('report.html')
 
+@app.route('/facility')
+def logout():
+    if request.method=='GET' and 'fcName' in request.args:
+        return render_template('facility.html',data=request.args.get('fcName')
 
-
+@app.route('/transit')
+def transit():
+    if request.method=='GET' and 'tranName' in request.args:
+        return render_template('transit.html',data=request.args.get('tranName')
+                               
 @app.route('/logout')
 def logout():
     if request.method=='GET' and 'mytext' in request.args:
