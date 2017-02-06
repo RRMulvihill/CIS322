@@ -4,6 +4,7 @@ import psycopg2
 import requests
 
 app = Flask(__name__)
+app.secret_key = 'secret'
 
 
 conn = psycopg2.connect("dbname=lost host='/tmp/'")
