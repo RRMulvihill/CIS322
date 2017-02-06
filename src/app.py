@@ -7,11 +7,11 @@ app = Flask(__name__)
 
 session = requests.session()
 
-conn = psycopg2.connect("dbname=dbname user=postgres")
+conn = psycopg2.connect("dbname=lost host='\tmp/'")
 cur = conn.cursor()
 cur.execute("SELECT * FROM assets;")
 res = cur.fetchall()
-processedData = []
+processed_data = []
 for r in res:
     processed_data.append( dict(zip(('column_name1', 'column_name2'), r)) )
     session['processed_data_session_name'] = processed_data 
