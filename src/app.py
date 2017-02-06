@@ -25,7 +25,7 @@ def facility():
     processed_data = []
     for r in res:
         processed_data.append( dict(zip(('column_name3', 'column_name4'), r)) )
-        session['processed_data_session_name'] = processed_data 
+        session['facility'] = processed_data 
     if request.method=='GET' and 'fcName' in request.args:
         return render_template('facility.html',data=request.args.get('fcName'))
     return render_template('facility.html',data=request.args.get('fcName'))
@@ -37,7 +37,7 @@ def transit():
     processed_data = []
     for r in res:
         processed_data.append( dict(zip(('column_name1','column_name2', 'column_name3', 'column_name4'), r)) )
-        session['processed_data_session_name'] = processed_data 
+        session['transit'] = processed_data 
     return render_template('transit.html',data=request.args.get('tranName'))
                                
 @app.route('/logout')
