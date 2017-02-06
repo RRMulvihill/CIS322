@@ -10,6 +10,7 @@
 </nav>
 <body><h1>In Transit Report</h1>
 <p> Transit Data: {{fcName}} </p>
+  <p>asset_fk,facility_fk,arrive_dt,depart_dt</p>
  <table>
       {% for entry in session.processed_data_session_name %}
   <tr>
