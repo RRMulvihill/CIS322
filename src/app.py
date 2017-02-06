@@ -9,6 +9,7 @@ def login():
 
 @app.route('/report')
 def report():
+    if request.method=='GET' and 'mytext' in request.args:
     return render_template('report.html')
 
 @app.route('/facility')
