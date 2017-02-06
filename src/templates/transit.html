@@ -12,7 +12,7 @@
 <p> Transit Data: {{fcName}} </p>
   <p>arrive_dt,depart_dt</p>
  <table>
-      {% for entry in session.processed_data_session_name %}
+      {% for entry in session.transit %}
   <tr>
     <td>{{ entry.column_name1 }}</td>
     <td>{{ entry.column_name2 }}</td>
