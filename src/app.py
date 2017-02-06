@@ -9,12 +9,13 @@ def login():
 
 @app.route('/report')
 def report():
-    if request.method=='GET' and 'mytext' in request.args:
     return render_template('report.html')
 
 @app.route('/facility')
 def facility():
+     if request.method=='GET' and 'fcName' in request.args:
         return render_template('facility.html',data=request.args.get('fcName'))
+    return render_template('facility.html',data=request.args.get('fcName'))
 
 @app.route('/transit')
 def transit():
