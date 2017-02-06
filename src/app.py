@@ -13,7 +13,7 @@ def report():
 
 @app.route('/facility')
 def facility():
-     if request.method=='GET' and 'fcName' in request.args:
+    if request.method=='GET' and 'fcName' in request.args:
         return render_template('facility.html',data=request.args.get('fcName'))
     return render_template('facility.html',data=request.args.get('fcName'))
 
