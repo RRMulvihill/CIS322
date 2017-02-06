@@ -9,12 +9,12 @@ session = requests.session()
 
 conn = psycopg2.connect("dbname=dbname user=postgres")
 cur = conn.cursor()
-cur.execute(SELECT * FROM assets)
+cur.execute("SELECT * FROM assets;")
 res = cur.fetchall()
 processedData = []
 for r in res:
     processed_data.append( dict(zip(('column_name1', 'column_name2'), r)) )
-   session['processed_data_session_name'] = processed_data 
+    session['processed_data_session_name'] = processed_data 
 @app.route('/')
 def login():
     return render_template('login.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
