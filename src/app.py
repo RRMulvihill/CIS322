@@ -20,7 +20,7 @@ def report():
 
 @app.route('/facility')
 def facility():
-    cur.execute("SELECT * FROM assets;")
+    cur.execute("SELECT asset_tag,description FROM assets;")
     res = cur.fetchall()
     processed_data = []
     for r in res:
@@ -32,7 +32,7 @@ def facility():
 
 @app.route('/transit')
 def transit():
-    cur.execute("SELECT * FROM assets_at;")
+    cur.execute("SELECT arrive_dt,depart_dt FROM assets_at;")
     res = cur.fetchall()
     processed_data = []
     for r in res:
