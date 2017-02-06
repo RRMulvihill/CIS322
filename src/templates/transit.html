@@ -10,14 +10,12 @@
 </nav>
 <body><h1>In Transit Report</h1>
 <p> Transit Data: {{fcName}} </p>
-  <p>asset_fk,facility_fk,arrive_dt,depart_dt</p>
+  <p>arrive_dt,depart_dt</p>
  <table>
       {% for entry in session.processed_data_session_name %}
   <tr>
     <td>{{ entry.column_name1 }}</td>
     <td>{{ entry.column_name2 }}</td>
-    <td>{{ entry.column_name3 }}</td>
-    <td>{{ entry.column_name4 }}</td>
   </tr>
   {% endfor %}
 </table>
