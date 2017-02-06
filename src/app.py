@@ -13,12 +13,10 @@ def report():
 
 @app.route('/facility')
 def logout():
-    if request.method=='GET' and 'fcName' in request.args:
         return render_template('facility.html',data=request.args.get('fcName')
 
 @app.route('/transit')
 def transit():
-    if request.method=='GET' and 'tranName' in request.args:
         return render_template('transit.html',data=request.args.get('tranName')
                                
 @app.route('/logout')
