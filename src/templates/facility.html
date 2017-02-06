@@ -12,7 +12,7 @@
 <p> Facility Location: {{fcName}} </p>
   <p>asset_tag,description</p>
   <table>
-      {% for entry in session.processed_data_session_name %}
+      {% for entry in session.facility %}
   <tr>
     <td>{{ entry.column_name1 }}</td>
     <td>{{ entry.column_name2 }}</td>
