@@ -10,6 +10,7 @@
 </nav>
 <body><h1>Facility Inventory Report</h1>
 <p> Facility Location: {{fcName}} </p>
+  <p>asset_pk,asset_tag,description</p>
   <table>
       {% for entry in session.processed_data_session_name %}
   <tr>
