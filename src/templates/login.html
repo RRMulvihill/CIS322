@@ -3,8 +3,14 @@
 	<p>Connected to {{dbhost}} at port {{dbport}} for database {{dbname}}</p>
 		<p>Enter User</p>
 		<form action="{{url_for('report')}}">
-			<input type="text" name="mytext" />
+			<input type="text" name=mytext/>
 			<input type="submit" name="submit" />
+			<script> 
+				_user =user()
+				_user.setUser(mytext)
+			</script>
+				
+				
 		</form>
 	</body>
 </html>
