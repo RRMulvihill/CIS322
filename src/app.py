@@ -12,7 +12,7 @@ def report():
     return render_template('report.html')
 
 @app.route('/facility')
-def logout():
+def facility():
         return render_template('facility.html',data=request.args.get('fcName'))
 
 @app.route('/transit')
