@@ -19,3 +19,5 @@ cd ..
 
 # Install the wsgi files
 cp -R src/* $HOME/wsgi
+# Need to install the crypo library as well
+cp util/osnap_crypto.py $HOME/wsgi
