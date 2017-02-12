@@ -17,9 +17,9 @@ def welcome():
 @app.route('/rest/lost_key', methods=('POST',))
     return
 
-@app.route('/rest/active_user', methods=('POST',))
+@app.route('/rest/activate_user', methods=('POST',))
 #not finished
-def active_user():
+def activate_user():
     # Try to handle as plaintext
     if request.method=='POST' and 'arguments' in request.form:
         req=json.loads(request.form['arguments'])
@@ -92,8 +92,8 @@ left join sec_levels l on t.level_fk=l.level_pk"""
         # Need to handle compartments too
         SQLstart = """select vendor,description,string_agg(c.abbrv||':'||l.abbrv,',')
 from security_tags t
-left join sec_compartments c on t.compartment_fk=c.compartment_pk
-left join sec_levels l on t.level_fk=l.level_pk
+left join compartments c on t.compartment_fk=c.compartment_pk
+left join levels l on t.level_fk=l.level_pk
 left join products p on t.product_fk=p.product_pk
 where product_fk is not NULL and c.abbrv||':'||l.abbrv = ANY(%s)"""
         if req['vendor']=='' and req['description']=='':
