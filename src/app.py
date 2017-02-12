@@ -14,6 +14,35 @@ def index():
 def welcome():
     return render_template('welcome.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
 
+@app.route('/rest/lost_key', methods=('POST',))
+    return
+
+@app.route('/rest/active_user', methods=('POST',))
+#not finished
+def active_user():
+    # Try to handle as plaintext
+    if request.method=='POST' and 'arguments' in request.form:
+        req=json.loads(request.form['arguments'])
+
+    dat = dict()
+    dat['timestamp'] = req['timestamp']
+    dat['result'] = 'OK'
+    data = json.dumps(dat)
+    return data
+
+@app.route('/rest/suspend_user', methods=('POST',))
+def suspend_user():
+    # Try to handle as plaintext
+    if request.method=='POST' and 'arguments' in request.form:
+        req=json.loads(request.form['arguments'])
+
+    dat = dict()
+    dat['timestamp'] = req['timestamp']
+    dat['result'] = 'OK'
+    data = json.dumps(dat)
+    return data
+
+
 @app.route('/rest/list_products', methods=('POST',))
 def list_products():
     """This function is huge... much of it should be broken out into other supporting
@@ -107,10 +136,10 @@ where product_fk is not NULL and c.abbrv||':'||l.abbrv = ANY(%s)"""
     
     conn.close()
     return data
-    
-@app.route('/rest/suspend_user', methods=('POST',))
-def suspend_user():
-    # Try to handle as plaintext
+ 
+@app.route('/rest/add_products', methods=('POST',))
+def add_products():
+        # Try to handle as plaintext
     if request.method=='POST' and 'arguments' in request.form:
         req=json.loads(request.form['arguments'])
 
@@ -120,6 +149,19 @@ def suspend_user():
     data = json.dumps(dat)
     return data
 
+
+@app.route('/rest/add_asset', methods=('POST',))
+def add_asset():
+        # Try to handle as plaintext
+    if request.method=='POST' and 'arguments' in request.form:
+        req=json.loads(request.form['arguments'])
+
+    dat = dict()
+    dat['timestamp'] = req['timestamp']
+    dat['result'] = 'OK'
+    data = json.dumps(dat)
+    return data
+    
 @app.route('/goodbye')
 def goodbye():
     if request.method=='GET' and 'mytext' in request.args:
