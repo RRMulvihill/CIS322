@@ -15,7 +15,15 @@ def welcome():
     return render_template('welcome.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
 
 @app.route('/rest/lost_key', methods=('POST',))
-    return
+    # Try to handle as plaintext
+    if request.method=='POST' and 'arguments' in request.form:
+        req=json.loads(request.form['arguments'])
+
+    dat = dict()
+    dat['timestamp'] = req['timestamp']
+    dat['result'] = 'OK'
+    data = json.dumps(dat)
+    return data
 
 @app.route('/rest/activate_user', methods=('POST',))
 #not finished
