@@ -10,9 +10,9 @@ def index():
     return render_template('index.html')
 
 @app.route('/rest')
-@app.route('/welcome')
+@app.route('/rest')
 def welcome():
-    return render_template('welcome.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
+    return render_template('rest.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
 
 @app.route('/rest/lost_key', methods=('POST',))
 def lost_key()
