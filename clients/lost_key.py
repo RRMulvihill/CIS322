@@ -33,9 +33,8 @@ def main():
     resp = json.loads(res.read().decode('ascii'))
     
     # Print the result code
-    print(resp['timestamp'])
-    print("Call to LOST returned: %s"%resp['result'])
-    print("Key returned in base64:\n%s"%resp['key'])
+    print("Call to LOST returned: %s"%resp)
+    #print("Key returned in base64:\n%s"%resp['key'])
     
 
 if __name__=='__main__':
