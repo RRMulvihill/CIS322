@@ -16,12 +16,10 @@ def rest():
 @app.route('/rest/lost_key', methods=('POST',))
 def lost_key():
     # Try to handle as plaintext
-    if request.method=='POST' and 'arguments' in request.form:
-        req=json.loads(request.form['arguments'])
-
     dat = dict()
-    dat['timestamp'] = req['timestamp']
+    dat['timestamp'] = datetime.datetime.utcnow().isoformat()
     dat['result'] = 'OK'
+    dat[key] = 'random_key'
     data = json.dumps(dat)
     return data
 
