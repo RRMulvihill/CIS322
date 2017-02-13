@@ -7,11 +7,10 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('rest.html')
 
 @app.route('/rest')
-@app.route('/rest')
-def welcome():
+def rest():
     return render_template('rest.html',dbname=dbname,dbhost=dbhost,dbport=dbport)
 
 @app.route('/rest/lost_key', methods=('POST',))
@@ -174,11 +173,11 @@ def add_asset():
 @app.route('/goodbye')
 def goodbye():
     if request.method=='GET' and 'mytext' in request.args:
-        return render_template('goodbye.html',data=request.args.get('mytext'))
+        return render_template('rest.html',data=request.args.get('mytext'))
 
     # request.form is only populated for POST messages
     if request.method=='POST' and 'mytext' in request.form:
-        return render_template('goodbye.html',data=request.form['mytext'])
-    return render_template('index.html')
+        return render_template('rest.html',data=request.form['mytext'])
+    return render_template('rest.html')
 if __name__=='__main__':
     app.run(host='0.0.0.0', port=8080)
