@@ -1,5 +1,5 @@
 CREATE TABLE user (
-	user varchar(16),
+	username varchar(16),
 	password varchar(16)
 );
 --I chose not to give a primary key at this time as it is not needed, 
