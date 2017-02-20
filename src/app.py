@@ -16,7 +16,7 @@ def login():
         password = request.form['pass']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
-        cur.execute("SELECT username,password FROM users WHERE username = '%s' and password = '%s'", (username,password))
+        cur.execute("SELECT username,password FROM users WHERE username = '%s' and password = '%s'"%(username,password))
         if cur.fetchone() is not None:
             #session['user'] = username
             return render_template('dashboard.html')
