@@ -35,7 +35,7 @@ def create_user():
         password = request.form['pass']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
-        cur.execute('SELECT username FROM users WHERE username = %s', (username))
+        cur.execute('SELECT username FROM users WHERE username = %s'%(username))
         session['user'] = username
         if cur.fetchone() is not None:
             return render_template('create_user.html')
