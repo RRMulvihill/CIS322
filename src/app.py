@@ -4,6 +4,7 @@ import json
 import psycopg2
 
 app = Flask(__name__)
+app.secret_key = 'secret'
 
 @app.route('/')
 
