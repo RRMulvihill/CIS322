@@ -7,6 +7,25 @@ app = Flask(__name__)
 
 @app.route('/')
 
+@app.route('/login' methods=['GET', 'POST'])
+def login():
+    if request.method =='GET':
+        return render_template('login.html')
+    if request.method == 'POST':
+        username = request.form['uname']
+        password = request.form['pass']
+        conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
+        cur  = conn.cursor()
+        cur.execute('SELECT username FROM users WHERE username = %s', (username))
+        if cur.fetchone() > 0:
+            session['user'] = username
+            return render_template('dashboard.html')
+        else:
+            return render_template('no_user.html')
+        return render_template('create_user.html')
+
+
+
 @app.route('/create_user' methods=['GET', 'POST'])
 def create_user():
     if request.method =='GET':
