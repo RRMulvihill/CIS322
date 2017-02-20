@@ -2,9 +2,9 @@
 	<body><h2>Lost Login</h2>
 	<p>Connected to {{dbhost}} at port {{dbport}} for database {{dbname}}</p>
 		<p>Enter User</p>
-		<form action="{{url_for('report')}}">
-			<input type="text" name=mytext/>
-			<input type="submit" name="submit" />		
+		<form action="{{url_for('login')}}">
+			<input type="username" name=uname/>
+			<input type="password" name="pass" />		
 		</form>
 	</body>
 </html
