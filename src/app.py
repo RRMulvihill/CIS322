@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from config import dbname, dbhost, dbport
 import json
 import psycopg2
@@ -18,7 +18,7 @@ def login():
         cur  = conn.cursor()
         cur.execute("SELECT username,password FROM users WHERE username = '%s' and password = '%s'"%(username,password))
         if cur.fetchone() is not None:
-            #session['user'] = username
+            session['user'] = username
             return render_template('dashboard.html')
         else:
             return render_template('no_user.html')
@@ -35,7 +35,7 @@ def create_user():
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
         cur.execute("SELECT username FROM users WHERE username = '%s'"%(username))
-        #session['user'] = username
+        session['user'] = username
         if cur.fetchone() is not None:
             return render_template('user_exists.html')
         else:
