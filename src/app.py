@@ -17,7 +17,7 @@ def login():
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
         cur.execute('SELECT username,password FROM users WHERE username = %s and password = %s', (username,password))
-        if cur.fetchone() > 0:
+        if cur.fetchone() is not None:
             session['user'] = username
             return render_template('dashboard.html')
         else:
@@ -37,7 +37,7 @@ def create_user():
         cur  = conn.cursor()
         cur.execute('SELECT username FROM users WHERE username = %s', (username))
         session['user'] = username
-        if cur.fetchone() > 0:
+        if cur.fetchone() is not None:
             return render_template('create_user.html')
         else:
             cur.execute('INSERT INTO users(username,password) VALUES (%s, %s);'%(username,password))
