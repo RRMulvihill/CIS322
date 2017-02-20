@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from config import dbname, dbhost, dbport, lost_priv, lost_pub, user_pub, prod_pub
+from config import dbname, dbhost, dbport
 import json
 import psycopg2
 
