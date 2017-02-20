@@ -22,7 +22,6 @@ def login():
             return render_template('dashboard.html')
         else:
             return render_template('no_user.html')
-        return render_template('create_user.html')
 
 
 
