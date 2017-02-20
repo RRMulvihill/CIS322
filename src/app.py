@@ -41,6 +41,7 @@ def create_user():
             return render_template('user_exists.html')
         else:
             cur.execute("INSERT INTO users(username,password) VALUES ('%s', '%s');"%(username,password))
+            conn.commit()
             return render_template('user_created.html')
     
 @app.route('/dashboard', methods=['GET',])
