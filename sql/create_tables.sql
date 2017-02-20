@@ -1,4 +1,4 @@
-CREATE TABLE user (
+CREATE TABLE users (
 	username varchar(16),
 	password varchar(16)
 );
