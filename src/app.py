@@ -16,9 +16,9 @@ def login():
         password = request.form['pass']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
-        cur.execute('SELECT username,password FROM users WHERE username = %s and password = %s', (username,password))
+        cur.execute("SELECT username,password FROM users WHERE username = '%s' and password = '%s'", (username,password))
         if cur.fetchone() is not None:
-            session['user'] = username
+            #session['user'] = username
             return render_template('dashboard.html')
         else:
             return render_template('no_user.html')
@@ -35,14 +35,13 @@ def create_user():
         password = request.form['pass']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
-        cur.execute('SELECT username FROM users WHERE username = %s'%(username))
-        session['user'] = username
+        cur.execute("SELECT username FROM users WHERE username = '%s'"%(username))
+        #session['user'] = username
         if cur.fetchone() is not None:
-            return render_template('create_user.html')
+            return render_template('user_exists.html')
         else:
-            cur.execute('INSERT INTO users(username,password) VALUES (%s, %s);'%(username,password))
-            return render_template('create_user.html')
-        return render_template('create_user.html')
+            cur.execute("INSERT INTO users(username,password) VALUES ('%s', '%s');"%(username,password))
+            return render_template('user_created.html')
     
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
