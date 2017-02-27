@@ -31,13 +31,13 @@ def create_user():
     if request.method =='GET':
         return render_template('create_user.html')
     if request.method == 'POST':
+        session['entry_type'] = "User"
         username = request.form['uname']
         password = request.form['pass']
         role = request.form['role']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
         cur.execute("SELECT username FROM users WHERE username = '%s'"%(username))
-        session['user'] = username
         if cur.fetchone() is not None:
             return render_template('entry_exists.html')
         else:
@@ -46,25 +46,48 @@ def create_user():
             role_fk = cur.fetchone()
             cur.execute("INSERT INTO users(username,password,role_fk) VALUES ('%s', '%s', '%s');"%(username,password,role_fk))
             conn.commit()
-            session['entry_type'] = "User"
+            session['user'] = username
             return render_template('entry_created.html')
 @app.route('/create_facility', methods=['GET', 'POST'])
 def create_facility():
     if request.method =='GET':
         return render_template('create_facility.html')
     if request.method == 'POST':
+        session['entry_type'] = "Facility"
         fname = request.form['fname']
         fcode = request.form['fcode']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
-        cur.execute("SELECT fname FROM facilities WHERE fname = '%s' or fcode = '%s'"%(fname,fcode))
+        cur.execute("SELECT fac_name FROM facilities WHERE fac_name = '%s' or fac_code = '%s'"%(fname,fcode))
         if cur.fetchone() is not None:
             return render_template('entry_exists.html')
         else:
             cur.execute("INSERT INTO facilities(fac_name,fac_code) VALUES ('%s', '%s');"%(fname,fcode))
             conn.commit()
-            session['entry_type'] = "Facility"
-            return render_template('entry_created.html')    
+            return render_template('entry_created.html')  
+@app.route('/add_asset', methods=['GET', 'POST'])
+def add_asset():
+    if request.method =='GET':
+        return render_template('add_asset.html')
+    if request.method == 'POST':
+        session['entry_type'] = "Asset"
+        asset_tag = request.form['tag']
+        description = request.form['desc']
+        date = request.form['date']
+        facility = request.form['fac']
+        conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
+        cur  = conn.cursor()
+        cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s'"%(asset_tag))
+        if cur.fetchone() is not None:
+            return render_template('entry_exists.html')
+        else:
+            cur.excecute("SELECT fac_pk FROM facilities where fac_name = '%s'"%(facility))
+            fac_fk = cur.fetchone()
+            cur.excecute("SELECT status_pk FROM asset_at where status = 'at_facility'")
+            fac_fk = cur.fetchone()
+            cur.execute("INSERT INTO assetss(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s');"%(asset_tag,description,fac_fk,status_fk))
+            conn.commit()
+            return render_template('entry_created.html')  
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
     return render_template('create_user.html')
