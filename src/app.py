@@ -17,9 +17,10 @@ def login():
         password = request.form['pass']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
-        cur.execute("SELECT username,password FROM users WHERE username = '%s' and password = '%s'"%(username,password))
+        cur.execute("SELECT username,password FROM users WHERE username = '%s' and password = '%s';"%(username,password))
         if cur.fetchone() is not None:
-            session['user'] = username
+            cur.excecute("SELECT role FROM roles JOIN users on roles(role_pk) = users(role_fk) WHERE users.username = '%s';"%(username))
+            session['role'] = cur.fetchone()[0]
             return render_template('dashboard.html')
         else:
             return render_template('no_user.html')
@@ -37,12 +38,12 @@ def create_user():
         role = request.form['role']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
-        cur.execute("SELECT username FROM users WHERE username = '%s'"%(username))
+        cur.execute("SELECT username FROM users WHERE username = '%s';"%(username))
         if cur.fetchone() is not None:
             return render_template('entry_exists.html')
         else:
             #get role_fk
-            cur.execute("SELECT role_pk FROM roles WHERE role = '%s'"%(role))
+            cur.execute("SELECT role_pk FROM roles WHERE role = '%s';"%(role))
             role_fk = cur.fetchone()
             cur.execute("INSERT INTO users(username,password,role_fk) VALUES ('%s', '%s', '%s');"%(username,password,role_fk))
             conn.commit()
@@ -58,7 +59,7 @@ def create_facility():
         fcode = request.form['fcode']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
-        cur.execute("SELECT fac_name FROM facilities WHERE fac_name = '%s' or fac_code = '%s'"%(fname,fcode))
+        cur.execute("SELECT fac_name FROM facilities WHERE fac_name = '%s' or fac_code = '%s';"%(fname,fcode))
         if cur.fetchone() is not None:
             return render_template('entry_exists.html')
         else:
@@ -77,20 +78,41 @@ def add_asset():
         facility = request.form['fac']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
-        cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s'"%(asset_tag))
+        cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(asset_tag))
         if cur.fetchone() is not None:
             return render_template('entry_exists.html')
         else:
             cur.excecute("SELECT fac_pk FROM facilities where fac_name = '%s'"%(facility))
             fac_fk = cur.fetchone()
-            cur.excecute("SELECT status_pk FROM asset_at where status = 'at_facility'")
-            fac_fk = cur.fetchone()
-            cur.execute("INSERT INTO assetss(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s');"%(asset_tag,description,fac_fk,status_fk))
+            cur.excecute("SELECT status_pk FROM asset_at where status = 'at_facility';")
+            fac_fk = cur.fetchone()[0]
+            cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s'));"%(asset_tag,description,fac_fk,status_fk))
             conn.commit()
             return render_template('entry_created.html')  
+@app.route('/dispose_asset', methods=['GET', 'POST'])
+def dispose_asset():
+    if session['role'] != "Logistics Officer":
+        return render_template('access_denied.html')
+    if request.method =='GET':
+        return render_template('dispose_asset.html')
+    if request.method == 'POST':
+        session['entry_type'] = "asset"
+        asset_tag = request.form['tag']
+        conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
+        cur  = conn.cursor()
+        cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(asset_tag))
+        if cur.fetchone() is None:
+            return render_template('error.html')
+        else:
+            cur.excecute("SELECT status_pk FROM asset_at where status = 'disposed';")
+            status_fk = cur.fetchone()[0]
+            cur.execute("UPDATE assets SET status_fk = '%s' WHERE asset_tag = '%s';"%(status_fk,tag))
+            conn.commit()
+            return render_template('dashboard.html')
+ 
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
-    return render_template('create_user.html')
+    return render_template('dashboard.html')
 
 if __name__=='__main__':
     app.run(host='0.0.0.0', port=8080)
