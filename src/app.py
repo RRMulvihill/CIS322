@@ -48,23 +48,23 @@ def create_user():
             conn.commit()
             session['entry_type'] = "User"
             return render_template('entry_created.html')
-@app.route('/create_fac', methods=['GET', 'POST'])
-def create_fac():
+@app.route('/create_facility', methods=['GET', 'POST'])
+def create_facility():
     if request.method =='GET':
-        return render_template('create_fac.html')
+        return render_template('create_facility.html')
     if request.method == 'POST':
         fname = request.form['fname']
         fcode = request.form['fcode']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
-        cur.execute("SELECT fname FROM facilities WHERE fname = '%s'"%(fname))
+        cur.execute("SELECT fname FROM facilities WHERE fname = '%s' or fcode = '%s'"%(fname,fcode))
         if cur.fetchone() is not None:
             return render_template('entry_exists.html')
         else:
             cur.execute("INSERT INTO facilities(fac_name,fac_code) VALUES ('%s', '%s');"%(fname,fcode))
             conn.commit()
             session['entry_type'] = "Facility"
-            return render_template('entry_created.html')    
+            return render_template('create_facility.html')    
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
     return render_template('create_user.html')
