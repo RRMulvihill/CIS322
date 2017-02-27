@@ -4,7 +4,9 @@
 		<p>Enter User</p>
 		<form action="{{url_for('create_user')}}" method="POST">
 			<input type="txt" name="uname"/>
-			<input type="txt" name="pass" />
+			<input type="password" name="pass" />
+			<input type="radio" name="role" value="Logistics Officer" checked> Logistics Officer<br>
+			<input type="radio" name="role" value="Facilities Officer"> Facilities Officer />
 			<input type="submit" name="submit" />	
 		</form>
 	</body>
