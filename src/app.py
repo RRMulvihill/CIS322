@@ -95,13 +95,13 @@ def dispose_asset():
 	cur = conn.cursor()
         cur.excecute("SELECT status_pk FROM asset_at where status = 'disposed';")
         status_fk = cur.fetchone()[0]
-		cur.execute("SELECT * FROM assets WHERE status_fk = '%s';"%(status_fk))
-		res = cur.fetchall()
-		assets = []
-		for asset in res:
-			assets.append("{}: {}".format(asset[1], asset[2]))
+	cur.execute("SELECT * FROM assets WHERE status_fk = '%s';"%(status_fk))
+	res = cur.fetchall()
+	assets = []
+	for asset in res:
+		assets.append("{}: {}".format(asset[1], asset[2]))
 
-		return render_template('dispose_asset.html', assets=assets)
+	return render_template('dispose_asset.html', assets=assets)
     if session['role'] != "Logistics Officer":
         return render_template('access_denied.html')
     if request.method =='GET':
