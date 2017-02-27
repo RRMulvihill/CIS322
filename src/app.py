@@ -46,6 +46,7 @@ def create_user():
             role_fk = cur.fetchone()
             cur.execute("INSERT INTO users(username,password,role_fk) VALUES ('%s', '%s', '%s');"%(username,password,role_fk))
             conn.commit()
+            session['entry_type'] = "User"
             return render_template('entry_created.html')
 @app.route('/create_fac', methods=['GET', 'POST'])
 def create_fac():
@@ -62,6 +63,7 @@ def create_fac():
         else:
             cur.execute("INSERT INTO facilities(fac_name,fac_code) VALUES ('%s', '%s');"%(fname,fcode))
             conn.commit()
+            session['entry_type'] = "Facility"
             return render_template('entry_created.html')    
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
