@@ -14,8 +14,8 @@ Create TABLE roles (
 );
 CREATE TABLE assets (
 	asset_tag varchar(16),
-	description text
-	facility_fk integer REFERENCES facilities(fac_pk),
+	description text,
+	fac_fk integer REFERENCES facilities(fac_pk),
 	status_fk integer REFERENCES asset_at(status_pk)
 );
 CREATE TABLE asset_at (
