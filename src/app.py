@@ -44,7 +44,7 @@ def create_user():
             #get role_fk
             cur.execute("SELECT role_pk FROM roles WHERE role = '%s'"%(role))
             role_fk = cur.fetchone()
-            cur.execute("INSERT INTO users(username,password,role) VALUES ('%s', '%s', '%s');"%(username,password,role_fk))
+            cur.execute("INSERT INTO users(username,password,role_fk) VALUES ('%s', '%s', '%s');"%(username,password,role_fk))
             conn.commit()
             return render_template('user_created.html')
     
