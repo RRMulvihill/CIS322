@@ -30,6 +30,6 @@ CREATE TABLE facilities (
 
 
 INSERT INTO roles (role) VALUES ('Logistics Officer');
-INSERT INTO roles (role) VALUES ('Facilities Officer')
-INSERT INTO asset_at (status) VALUES ('at_facility')
-INSERT INTO asset_at (status) VALUES ('disposed')
+INSERT INTO roles (role) VALUES ('Facilities Officer');
+INSERT INTO asset_at (status) VALUES ('at_facility');
+INSERT INTO asset_at (status) VALUES ('disposed');
