@@ -104,25 +104,24 @@ def dispose_asset():
 		assets.append("{}: {}".format(asset[1], asset[2]))
 
 		return render_template('dispose_asset.html', assets=assets)
-    if session['role'] != "Logistics Officer":
-        return render_template('access_denied.html')
-    if request.method =='GET':
-        return render_template('dispose_asset.html')
-    if request.method == 'POST':
-        session['entry_type'] = "asset"
-        asset_tag = request.form['tag']
-        conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
-        cur  = conn.cursor()
-        cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(asset_tag))
-        if cur.fetchone() is None:
-            return render_template('error.html')
-        else:
-            cur.excecute("SELECT status_pk FROM asset_at where status = 'disposed';")
-            status_fk = cur.fetchone()[0]
-            cur.execute("UPDATE assets SET status_fk = '%s' WHERE asset_tag = '%s';"%(status_fk,tag))
-            conn.commit()
-            return render_template('dashboard.html')
- 
+    	if session['role'] != "Logistics Officer":
+       		return render_template('access_denied.html')
+    	if request.method =='GET':
+        	return render_template('dispose_asset.html')
+    	if request.method == 'POST':
+            session['entry_type'] = "asset"
+            asset_tag = request.form['tag']
+            conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
+            cur  = conn.cursor()
+            cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(asset_tag))
+            if cur.fetchone() is None:
+                return render_template('error.html')
+            else:
+            	cur.excecute("SELECT status_pk FROM asset_at where status = 'disposed';")
+            	status_fk = cur.fetchone()[0]
+                cur.execute("UPDATE assets SET status_fk = '%s' WHERE asset_tag = '%s';"%(status_fk,tag))
+                conn.commit()
+            	return render_template('dashboard.html')
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
     return render_template('dashboard.html')
