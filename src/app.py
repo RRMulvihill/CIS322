@@ -39,15 +39,30 @@ def create_user():
         cur.execute("SELECT username FROM users WHERE username = '%s'"%(username))
         session['user'] = username
         if cur.fetchone() is not None:
-            return render_template('user_exists.html')
+            return render_template('entry_exists.html')
         else:
             #get role_fk
             cur.execute("SELECT role_pk FROM roles WHERE role = '%s'"%(role))
             role_fk = cur.fetchone()
             cur.execute("INSERT INTO users(username,password,role_fk) VALUES ('%s', '%s', '%s');"%(username,password,role_fk))
             conn.commit()
-            return render_template('user_created.html')
-    
+            return render_template('entry_created.html')
+@app.route('/create_fac', methods=['GET', 'POST'])
+def create_fac():
+    if request.method =='GET':
+        return render_template('create_fac.html')
+    if request.method == 'POST':
+        fname = request.form['fname']
+        fcode = request.form['fcode']
+        conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
+        cur  = conn.cursor()
+        cur.execute("SELECT fname FROM facilities WHERE fname = '%s'"%(fname))
+        if cur.fetchone() is not None:
+            return render_template('entry_exists.html')
+        else:
+            cur.execute("INSERT INTO facilities(fac_name,fac_code) VALUES ('%s', '%s');"%(fname,fcode))
+            conn.commit()
+            return render_template('entry_created.html')    
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
     return render_template('create_user.html')
