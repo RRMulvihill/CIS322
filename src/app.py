@@ -33,6 +33,7 @@ def create_user():
     if request.method == 'POST':
         username = request.form['uname']
         password = request.form['pass']
+        role = request.form['role']
         conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
         cur  = conn.cursor()
         cur.execute("SELECT username FROM users WHERE username = '%s'"%(username))
@@ -40,7 +41,10 @@ def create_user():
         if cur.fetchone() is not None:
             return render_template('user_exists.html')
         else:
-            cur.execute("INSERT INTO users(username,password) VALUES ('%s', '%s');"%(username,password))
+            #get role_fk
+            cur.execute("SELECT role_pk FROM roles WHERE role = '%s'"%(role))
+            role_fk = cur.fetchone()
+            cur.execute("INSERT INTO users(username,password,role) VALUES ('%s', '%s', '%s');"%(username,password,role_fk))
             conn.commit()
             return render_template('user_created.html')
     
