@@ -64,7 +64,7 @@ def create_facility():
             cur.execute("INSERT INTO facilities(fac_name,fac_code) VALUES ('%s', '%s');"%(fname,fcode))
             conn.commit()
             session['entry_type'] = "Facility"
-            return render_template('create_facility.html')    
+            return render_template('entry_created.html')    
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
     return render_template('create_user.html')
