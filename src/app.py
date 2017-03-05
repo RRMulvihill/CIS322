@@ -33,7 +33,8 @@ def create_user():
 		username = request.form['uname']
 		password = request.form['pass']
 		role = request.form['role']
-		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)cur  = conn.cursor()
+		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
+		cur  = conn.cursor()
         	cur.execute("SELECT username FROM users WHERE username = '%s';"%(username))
 		if cur.fetchone() is not None:
 			return render_template('entry_exists.html')
