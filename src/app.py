@@ -68,27 +68,27 @@ def create_facility():
 		    	return render_template('entry_created.html')  
 @app.route('/add_asset', methods=['GET', 'POST'])
 def add_asset():
-	    if request.method =='GET':
-			return render_template('add_asset.html')
-	    if request.method == 'POST':
-			session['entry_type'] = "Asset"
-			asset_tag = request.form['tag']
-			description = request.form['desc']
-			date = request.form['date']
-			facility = request.form['fac']
-			conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
-			cur  = conn.cursor()
-			cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(asset_tag))
-			if cur.fetchone() is not None:
-			    	return render_template('entry_exists.html')
-			else:
-				cur.excecute("SELECT fac_pk FROM facilities where fac_name = '%s'"%(facility))
-				fac_fk = cur.fetchone()
-				cur.excecute("SELECT status_pk FROM asset_at where status = 'at_facility';")
-				fac_fk = cur.fetchone()[0]
-				cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s'));"%(asset_tag,description,fac_fk,status_fk))
-				conn.commit()
-		    		return render_template('entry_created.html')  
+	if request.method =='GET':
+		return render_template('add_asset.html')
+	if request.method == 'POST':
+		session['entry_type'] = "Asset"
+		asset_tag = request.form['tag']
+		description = request.form['desc']
+		date = request.form['date']
+		facility = request.form['fac']
+		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
+		cur  = conn.cursor()
+		cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(asset_tag))
+		if cur.fetchone() is not None:
+			return render_template('entry_exists.html')
+		else:
+			cur.excecute("SELECT fac_pk FROM facilities where fac_name = '%s'"%(facility))
+			fac_fk = cur.fetchone()
+			cur.excecute("SELECT status_pk FROM asset_at where status = 'at_facility';")
+			fac_fk = cur.fetchone()[0]
+			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s'));"%(asset_tag,description,fac_fk,status_fk))
+			conn.commit()
+			return render_template('entry_created.html')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
 def dispose_asset():
 	conn = psycopg2.connect(dbname=dbname, host=dbhost,port=dbport)
