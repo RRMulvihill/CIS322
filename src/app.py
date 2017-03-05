@@ -21,7 +21,7 @@ def login():
         	if cur.fetchone() is not None:
             		cur.excecute("SELECT role FROM roles JOIN users on roles(role_pk) = users(role_fk) WHERE users.username = '%s';"%(username))
             		session['role'] = cur.fetchone()[0]
-            	return render_template('dashboard.html')
+            		return render_template('dashboard.html')
         	else:
             		return render_template('no_user.html')
 
