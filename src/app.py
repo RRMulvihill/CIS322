@@ -31,7 +31,7 @@ def login():
 def create_user():
 	if request.method =='GET':
         	return render_template('create_user.html')
-    	if request.method == 'POST':
+	if request.method == 'POST':
         	session['entry_type'] = "User"
         	username = request.form['uname']
         	password = request.form['pass']
