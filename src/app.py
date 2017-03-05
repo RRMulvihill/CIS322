@@ -1,3 +1,4 @@
+#whitespacing issue resolved!
 from flask import Flask, render_template, request, session
 from config import dbname, dbhost, dbport
 import json
