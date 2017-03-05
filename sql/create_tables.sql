@@ -16,7 +16,6 @@ CREATE TABLE users (
 --so my code is streamlined and not burdened with currenlty unecessary code.
 --The varchar feilds are corresponding to the assignemnt instructions "no longer than 16 characters"
 
-);
 CREATE TABLE asset_at (
 	status_pk serial primary key,
 	status varchar(16)
@@ -34,6 +33,7 @@ CREATE TABLE assets (
 	description text,
 	fac_fk integer REFERENCES facilities(fac_pk),
 	status_fk integer REFERENCES asset_at(status_pk)
+);
 --potentialy status_fk could be a boolean to handle disposed elements
 
 --initialize database with roles and statuses 
