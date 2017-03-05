@@ -1,4 +1,3 @@
-
 Create TABLE roles (
 	role_pk serial primary key,
 	role varchar(18)
@@ -6,14 +5,13 @@ Create TABLE roles (
 --the role feild will be either "logistics officer" or "facilities officer" so it only needs 18 characters
 --its pk will be used by users, this will kelp minimalize typos and time typing out roles
 CREATE TABLE users (
+	user_pk serial primary key,
 	username varchar(16),
 	password varchar(16),
 	role_fk integer REFERENCES roles(role_pk)
 );
---I chose not to give a primary key at this time as it is not needed, 
+--I have now added a pk to users for requests
 --sessons will use the username not an integer id.
---I am creating code that fufills the requsted output,
---so my code is streamlined and not burdened with currenlty unecessary code.
 --The varchar feilds are corresponding to the assignemnt instructions "no longer than 16 characters"
 
 CREATE TABLE asset_at (
@@ -22,19 +20,45 @@ CREATE TABLE asset_at (
 );
 --tracks the state of the asset, initialized to hold  "at facility" and "disposed"
 --todo: change this table to a boolean status for assets
+
 CREATE TABLE facilities (
 	fac_pk serial primary key,
 	fac_name varchar(32),
 	fac_code varchar(6)
 );
 --pk is used by assets, I am considering initializing a "disposed" facility to eliminate the asset_at table
+
 CREATE TABLE assets (
+	asset_pk serial primary key,
 	asset_tag varchar(16),
 	description text,
 	fac_fk integer REFERENCES facilities(fac_pk),
 	status_fk integer REFERENCES asset_at(status_pk)
 );
+--asset_pk added for requests
 --potentialy status_fk could be a boolean to handle disposed elements
+
+CREATE TABLE request (
+	submitter_fk integer REFERENCES users(user_pk),
+	submit_dt timestamp,
+	fac_fk integer REFERENCES facilities(fac_pk),
+	asset_fk integer REFERENCES assets(asset_pk),
+	approver_fk integer REFERENCES users(user_pk),
+	approved_dt timestamp
+);
+--I used foriegn keys heavily, adding the pk's for assignment8
+--these will connect tables without fear of spelling errors or redundantcy
+--as far as the feilds I referenced the assignment description
+
+CREATE TABLE transit (
+	source_fk integer REFERENCES facilities(fac_pk),
+	load_dt timestamp,
+	destination_fk integer REFERENCES facilities(fac_pk),
+	unload_dt timestamp
+);
+--I kept to the assignment description's suggestion
+--pretty straight forward, I decided to create a transit table
+--instead of perhaps merging its feilds into existing tables
 
 --initialize database with roles and statuses 
 INSERT INTO roles (role) VALUES ('Logistics Officer');
