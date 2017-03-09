@@ -153,6 +153,12 @@ def transfer_req():
 		conn.commit()
 		session['entry'] = 'request'
 		return render_template('entry_created.html') 
+@app.route('/transfer_req', methods=['GET','POST'])
+def transfer_req():
+	if session['role'] != 'Facilities Officer':
+		session['error_msg'] = 'Only Facilities Officers can approve Transfer Requests.'
+		return render_template('error.html')
+	
 
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
