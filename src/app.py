@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session
 from config import dbname, dbhost, dbport
 import json
 import psycopg2
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'secret'
@@ -131,13 +132,27 @@ def transfer_req():
 		source = request.form['source']
 		destination = request.form['destination']
 		tag = request.form['tag']
+		user_pk = session['user_pk']
 		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
 		cur  = conn.cursor()
-		cur.execute("SELECT fac_e FROM facilities WHERE fcode = '%s';"%(fcode))
+		timestamp = datetime.now()
+		cur.execute("SELECT fac_code FROM facilities WHERE fac_code = '%s';"%(source))
 		if cur.fetchone() is not None:
 			session['error_msg'] = 'Source Facility not found'
-			return render_template('entry_exists.html')
-		
+			return render_template('error.html')
+				cur.execute("SELECT fac_code FROM facilities WHERE fac_code = '%s';"%(source))
+		cur.execute("SELECT fac_code FROM facilities WHERE fac_code = '%s';"%(destination))	
+		if cur.fetchone() is not None:
+			session['error_msg'] = 'Destination Facility not found'
+			return render_template('error.html')
+		cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(tag))
+			if cur.fetchone() is not None:
+			session['error_msg'] = 'asset tag not found'
+			return render_template('error.html')
+		cur.execute("INSERT INTO requests(submitter_fk,submit_dt,fac_fk,approver__fk,approved_dt) VALUES ('%s', '%s'));"%(user_pk,timestamp,destination,'NULL','NULL'))
+		conn.commit()
+		session['entry'] = 'request'
+		return render_template('entry_created.html') 
 
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
