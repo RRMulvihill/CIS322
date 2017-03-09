@@ -1,11 +1,11 @@
 <html>
-	<body><h2>Create Facility</h2>
-	<p>Create Facility</p>
-		<p>Enter User</p>
+  <title>Transfer Request</title>
+	<body><h2>Transfer Request</h2>
+		<p>Enter Source Facility Code, Destination Facility Code, and Asset Tag </p>
 		<form action="{{url_for('create_fac')}}" method="POST">
 			<input type="txt" name="source"/>
 			<input type="txt" name="destination" />
-      <input type="txt" name="tag" />
+      			<input type="txt" name="tag" />
 			<input type="submit" name="submit" />	
 		</form>
 	</body>
