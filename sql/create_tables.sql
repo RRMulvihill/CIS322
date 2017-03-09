@@ -38,7 +38,7 @@ CREATE TABLE assets (
 --asset_pk added for requests
 --potentialy status_fk could be a boolean to handle disposed elements
 
-CREATE TABLE request (
+CREATE TABLE requests (
 	submitter_fk integer REFERENCES users(user_pk),
 	submit_dt timestamp,
 	fac_fk integer REFERENCES facilities(fac_pk),
