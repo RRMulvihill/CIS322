@@ -1,4 +1,3 @@
-#whitespacing issue resolved!
 from flask import Flask, render_template, request, session
 from config import dbname, dbhost, dbport
 import json
@@ -119,7 +118,26 @@ def dispose_asset():
 			return render_template('dashboard.html')
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
+	#todo, check user role to show nav
 	return render_template('dashboard.html')
+@app.route('/transfer_req', methods=['GET','POST'])
+def transfer_req():
+	if session['role'] != 'Logistics Officer':
+		session['error_msg'] = 'Only Logistics Officers May make Transfer Requests, nice try Larry.'
+		return render_template('error.html')
+	if request.method == 'GET':
+		return render_template('transfer_req.html')
+	if request.method == 'POST':
+		source = request.form['source']
+		destination = request.form['destination']
+		tag = request.form['tag']
+		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
+		cur  = conn.cursor()
+		cur.execute("SELECT fac_e FROM facilities WHERE fcode = '%s';"%(fcode))
+		if cur.fetchone() is not None:
+			session['error_msg'] = 'Source Facility not found'
+			return render_template('entry_exists.html')
+		
 
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
