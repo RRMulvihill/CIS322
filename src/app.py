@@ -91,7 +91,7 @@ def dispose_asset():
 		assets.append("{}: {}".format(asset[1], asset[2]))
 	#return render_template('dispose_asset.html', assets=assets)
 	if session['role'] != "Logistics Officer":
-		session['msg'] = 'Error! Access Denied for non Logistics Officers"
+		session['msg'] = 'Error! Access Denied for non Logistics Officers'
 		return render_template('dashboard.html')
 	if request.method =='GET':
 		return render_template('dispose_asset.html')
