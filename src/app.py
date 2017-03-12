@@ -173,7 +173,7 @@ def transfer_req():
 			session['msg'] = 'ERROR: asset tag not found'
 			return render_template('dashboard.html')
 		sql = "INSERT INTO requests(submitter_fk,submit_dt,source_fk,destination_fk,asset_fk,approver__fk,approved_dt,approved) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
-		query(sql,(user_pk,timestamp,source,destination,asset_fk,'NULL','NULL','FALSE'))
+		query(sql,(user_pk,timestamp,source,destination,asset_fk,'NULL','NULL','FALSE')
 		session['msg'] = 'request created'
 		return render_template('dashboard.html')
 @app.route('/approve_req', methods=['GET','POST'])
