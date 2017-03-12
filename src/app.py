@@ -232,7 +232,7 @@ def asset_report():
 	sql = "SELECT fac_name, FROM facilities;"
 	facilities = query(sql,())
 	if request.method =='GET':
-		blank=iter[]
+		blank=[]
 		return render_template('asset_report.html', facilities=facilites,report =blank)
 	if request.method == 'POST':
 		facility=request.form['facility']
