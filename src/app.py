@@ -35,12 +35,12 @@ def login():
 		password = request.form['pass']
 		sql = ("SELECT username,password FROM users WHERE username = %s and password = %s;")
 		res = query(sql,(username,password))
-		if not (res):
+		if (res):
 			sql = ("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = %s;")
 			session['role'] = query(sql,username)
 			return render_template('dashboard.html')
 		else:
-			session['error_msg'] = 'Error! User already exists'
+			session['error_msg'] = 'Error! User does not exist'
 			return render_template('error.html')
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
