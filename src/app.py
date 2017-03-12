@@ -143,7 +143,7 @@ def dashboard():
 		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
 		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE';"
 		ftasks = query(sql,())[0]
-		return render_template('dashboard.html',columns=columns,ltasks[0] = blank,ftasks=ftasks)
+		return render_template('dashboard.html',columns=columns,ltasks = blank,ftasks=ftasks)
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
 	if session['role'] != 'Logistics Officer':
@@ -188,7 +188,7 @@ def approve_req():
 		columns=[('request tag'),('Asset tag'),('Source Facility'),('Destination Facility'),('Request Date')]
 		sql = "SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag=%s;"
 		request_data = query(sql,(req_pk,))
-		return render_template('approve_req',columns=columns, req_pk=req_pk, request_data=request_data[0],)
+		return render_template('approve_req',columns=columns, req_pk=req_pk, request_data=request_data,)
 	if method.request == "POST":
 		decision = request.form['Decision']
 		if (decision == 'Reject'):
@@ -222,7 +222,7 @@ def update_transit():
 		columns=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
 		sql = "SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag=%s;"
 		transit_data = query(sql,(req_fk,))
-		return render_template('update_transit.html', columns = columns, transit_data = transit_data[0])
+		return render_template('update_transit.html', columns = columns, transit_data = transit_data)
 	if request.method=='POST':
 		req_fk=request.form['req_fk']
 		load = request.form['load']
@@ -247,7 +247,7 @@ def asset_report():
 		else:
 			sql = "SELECT a.asset_tag, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk WHERE f.fac_code = %s;"
 			report = query(sql,(facility[0][0]))
-			return render_template('asset_report.html', facilities=facilities, report = report[0])
+			return render_template('asset_report.html', facilities=facilities, report = report)
 @app.route('/transfer_report', methods=['GET','POST'])
 def transfer_report():
 	return render_template('transfer_report.html')
