@@ -1,7 +1,7 @@
 <html>
 <title>Approve Request</title>
 <body>
-  <h1> Request Approval INterface </h1>
+  <h1> Request Approval Interface </h1>
   <table style="width:100%">
       <tr>
         {% for col in columns %}
@@ -12,7 +12,7 @@
         <th>{{data}}</ th>
         {% endfor %}
       </table>
-      <form name='approve_req' action"{{url_for('approve_req'}}" method='POST'>
+      <form name='approve_req' action="{{url_for('approve_req')}}" method='POST'>
          <input type="txt" name="req_tag"/>
          <input type="submit" value="Approve" name="Decision" />
          <input type="submit" value="Reject" name="Decision" />
