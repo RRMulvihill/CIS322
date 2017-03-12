@@ -233,7 +233,7 @@ def asset_report():
 	facilities = query(sql,())
 	if request.method =='GET':
 		blank=[]
-		return render_template('asset_report.html', facilities=facilites,report =blank)
+		return render_template('asset_report.html', facilities=facilities,report =blank)
 	if request.method == 'POST':
 		facility=request.form['facility']
 		if (facility=='0'):
