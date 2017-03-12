@@ -51,15 +51,15 @@ def create_user():
 		username = request.form['uname']
 		password = request.form['pass']
 		role = request.form['role']
-		sql = ("SELECT username FROM users WHERE username = '%s';")
+		sql = ("SELECT username FROM users WHERE username = %s;")
 		user = query(sql,(username,))
 		if (user):
 			return render_template('entry_exists.html')
 		else:
 			#get role_fk
-			sql = "SELECT role_pk FROM roles WHERE role = '%s';"
+			sql = "SELECT role_pk FROM roles WHERE role = %s;"
 			role_fk = query(sql,(role,))
-			sql = "INSERT INTO users(username,password,role_fk) VALUES ('%s', '%s', '%s');"
+			sql = "INSERT INTO users(username,password,role_fk) VALUES (%s, %s, %s);"
 			query(sql,(username,password,role_fk[0]))
 			session['user'] = username
 			return render_template('entry_created.html')
@@ -71,11 +71,11 @@ def add_facility():
 		session['entry_type'] = "Facility"
 		fname = request.form['fname']
 		fcode = request.form['fcode']
-		cur.execute("SELECT fac_name FROM facilities WHERE fac_name = '%s' or fac_code = '%s';"%(fname,fcode))
+		cur.execute("SELECT fac_name FROM facilities WHERE fac_name =%s or fac_code = %s;"%(fname,fcode))
 		if cur.fetchone() is not None:
 			return render_template('entry_exists.html')
 		else:
-			cur.execute("INSERT INTO facilities(fac_name,fac_code) VALUES ('%s', '%s');"%(fname,fcode))
+			cur.execute("INSERT INTO facilities(fac_name,fac_code) VALUES (%s, %s);"%(fname,fcode))
 			conn.commit()
 			return render_template('entry_created.html')  
 @app.route('/add_asset', methods=['GET', 'POST'])
@@ -88,15 +88,15 @@ def add_asset():
 		description = request.form['desc']
 		date = request.form['date']
 		fac_code = request.form['fac']
-		sql = "SELECT asset_tag FROM assets WHERE asset_tag = '%s';"
+		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
 		tag = query(sql,(asset_tag))
 		if (tag):
 			session['msg'] = 'asset already exists with the given tag'
 			return render_template('dashboard.html')
 		else:
-			sql = "SELECT fac_pk FROM facilities where fac_code = '%s';"
+			sql = "SELECT fac_pk FROM facilities where fac_code = %s;"
 			fac_fk = (query(sql,(fac_code,)))[0]
-			sql = "INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES ('%s', '%s','%s','%s');"
+			sql = "INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES (%s, %s,%s,%s);"
 			query(sql,(asset_tag,description,fac_fk,'FALSE'))
 			session['msg'] = 'asset created!'
 			return render_template('dashboard.html')  
