@@ -71,13 +71,16 @@ def add_facility():
 		session['entry_type'] = "Facility"
 		fname = request.form['fname']
 		fcode = request.form['fcode']
-		cur.execute("SELECT fac_name FROM facilities WHERE fac_name =%s or fac_code = %s;"%(fname,fcode))
-		if cur.fetchone() is not None:
-			return render_template('entry_exists.html')
+		sql = "SELECT fac_name FROM facilities WHERE fac_name =%s or fac_code = %s;"
+		entry_exists = query(sql,(fname,fcode))
+		if (entry_exists):
+			session['msg'] = 'facility already exists'
+			return render_template('dashboard.html')
 		else:
-			cur.execute("INSERT INTO facilities(fac_name,fac_code) VALUES (%s, %s);"%(fname,fcode))
-			conn.commit()
-			return render_template('entry_created.html')  
+			sql = "INSERT INTO facilities(fac_name,fac_code) VALUES (%s, %s);"
+			query(sql,(fname,fcode))
+			session['msg'] = 'Facility Created!'
+			return render_template('dashboard.html')  
 @app.route('/add_asset', methods=['GET', 'POST'])
 def add_asset():
 	if request.method =='GET':
