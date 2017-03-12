@@ -106,7 +106,8 @@ def add_asset():
 @app.route('/dispose_asset', methods=['GET', 'POST'])
 def dispose_asset():
 	sql = "SELECT * FROM assets WHERE disposed = 'FALSE';"
-	res = query(sql)
+	param = ''
+	res = query(sql,())
 	assets = []
 	for asset in res:
 		assets.append("{}: {}".format(asset[1], asset[2]))
