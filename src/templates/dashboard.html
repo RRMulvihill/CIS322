@@ -1,10 +1,5 @@
 <html>
 	<body><h1>Welcome {{username}}</h1>
-		<div align="right">
-			<form name = 'logout' action="{{url_for('logout')}}">
-				<input type="submit" value='Logout {{username}}' name='logout' />
-			</form>
-		</div>
 		<table style="width:100%">
 			<tr>
 				{% for col in columns %}
