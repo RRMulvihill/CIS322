@@ -120,7 +120,7 @@ def dispose_asset():
 		tag_exists = query(sql,(asset_tag,))
 		if not (tag_exists):
 			session['msg'] = 'Asset not found!'
-			return render_template('dashboard.html.)
+			return render_template('dashboard.html') 
 		else:
 			sql = "UPDATE assets SET disposed = 'TRUE' WHERE asset_tag = %s;"
 			query(sql,(tag,))
@@ -151,7 +151,7 @@ def transfer_req():
 		destination = request.form['destination']
 		tag = request.form['tag']
 		user_pk = session['user_pk']
-		timestamp = datetime.now()
+		timestamp = datetime.now() 
 		sql = "SELECT fac_code FROM facilities WHERE fac_code = %s;"
 		src = (sql,(source,))
 		if not (src):
@@ -167,33 +167,34 @@ def transfer_req():
 		if not (is_tag):
 			session['msg'] = 'ERROR: asset tag not found'
 			return render_template('dashboard.html')
-		sql = "INSERT INTO requests(submitter_fk,submit_dt,fac_fk,approver__fk,approved_dt,approved) VALUES (%s, %s,;"
-		
-		
-		query(sql,(user_pk,timestamp,destination,'NULL','NULL','FALSE'))
+		sql = "INSERT INTO requests(submitter_fk,submit_dt,source_fk,destination_fk,asset_fk,approver__fk,approved_dt,approved) VALUES (%s,%s,%s,%s,%s,%s,%s,%s;"
+		query(sql,(user_pk,timestamp,source,destination,asset_fk,'NULL','NULL','FALSE'))
 		session['msg'] = 'request created'
 		return render_template('dashboard.html')
 @app.route('/approve_req', methods=['GET','POST'])
 def approve_req():
 	if session['role'] != 'Facilities Officer':
-		session['error_msg'] = 'Only Facilities Officers can approve Transfer Requests.'
-		return render_template('error.html')
+		session['msg'] = 'Only Facilities Officers can approve Transfer Requests.'
+		return render_template('dashboard.html')
 	if method.request == 'GET':
 		req_pk = request.args['req_pk']
 		columns=[('request tag'),('Asset tag'),('Source Facility'),('Destination Facility'),('Request Date')]
-		cur.execute("SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag='%s'"(req_pk))
-		request_data = cur.fetchall()
+		sql = "SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag=%s"
+		request_data = query(sql,(req_pk,))
 		return render_template('approve_req',columns=columns, req_pk=req_pk, request_data=request_data,)
 	if method.request == "POST":
 		decision = request.form['Decision']
 		if (decision == 'Reject'):
-			cur.execute("DELETE FROM requests WHERE req_pk = '%s'"%(req_pk))
-			conn.commit()
+			sql = "DELETE FROM requests WHERE req_pk = %s"
+			query(sql,(req_pk,))
+			session['msg'] = 'Request Removed'
 			return render_template('dashboard.html')
 		else:
-			cur.execute("UPDATE requests SET approved ='TRUE' WHERE req_pk = '%s'"%(req_pk))
-			cur.execute("INSERT INTO transit(req_fk,source_fk,destination_fk,load_dt,unload_dt) VALUES ('%s','%s','%s','NULL','NULL')"%(request_data[0],request_data[2],request_data[3]))
-			cur.commit()
+			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s"
+			query(sql,(req_pk,))
+			sql = "INSERT INTO transit(req_fk,asset_tag,source_fk,destination_fk,load_dt,unload_dt) VALUES (%s,%s,%s,%s,'NULL','NULL')"
+			query(sql,(request_data[0],request_data[1],request_data[2],request_data[3]))
+			session['msg'] = 'request approved'
 			return render_template('dashboard.html')
 		
 @app.route('/update_transit', methods=['GET','POST'])
@@ -203,24 +204,24 @@ def update_transit():
 		return render_template('error.html')
 	if request.method=='GET':
 		req_fk=request.form['req_pk']
-		cur.execute("SELECT load_dt,unload_dt FROM transit WHERE req_fk = '%s'"%(req_fk))
-		transit = cur.fetchone()
-		if transit is None:
-			session['error_msg'] = 'transit entry not found'
-			return render_template('error.html')
+		sql = "SELECT load_dt,unload_dt FROM transit WHERE req_fk = %s"
+		transit = query(sql,(req_fk,))
+		if not (transit):
+			session['msg'] = 'ERROR: transit entry not found'
+			return render_template('dashboard.html')
 		if transit[1] != null:
-			session['error_msg'] = 'transit has already been unloaded'
-			return render_template('error.html')
+			session['msg'] = 'transit has already been unloaded'
+			return render_template('dashboard.html')
 		columns=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
-		cur.execute("SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag='%s'"(req_fk))
-		transit_data = cur.fetchall()
+		sql = "SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag=%s"
+		transit_data = query(sql,(req_fk,))
 		return render_template('update_transit.html', columns = columns, transit_data = transit_data)
 	if request.method=='POST':
 		req_fk=request.form['req_fk']
 		load = request.form['load']
 		unload = request.form['unload']
-		cur.execute("UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = '%s'"%(req_fk,load,unload))
-		cur.commit()
+		sql = "UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = %s"
+		query(sql,(req_fk,load,unload))
 		session['msg'] = 'Transit Request Updated!'
 		return render_template('dashboard.html')
 @app.route('/asset_report', methods=['GET','POST'])
