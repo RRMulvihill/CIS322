@@ -33,7 +33,7 @@ def login():
 		username = request.form['uname']
 		session['username'] = username
 		sql = "SELECT user_pk FROM users WHERE username = %s;"
-		session['user_pk'] = query(sql,(username,))[0][0]
+		session['user_pk'] = query(sql,(username,))
 		password = request.form['pass']
 		sql = ("SELECT username,password FROM users WHERE username = %s and password = %s;")
 		res = query(sql,(username,password))
@@ -54,13 +54,13 @@ def create_user():
 		password = request.form['pass']
 		role = request.form['role']
 		sql = ("SELECT username FROM users WHERE username = %s;")
-		user = query(sql,(username,))[0][0]
+		user = query(sql,(username,))
 		if (user):
 			return render_template('entry_exists.html')
 		else:
 			#get role_fk
 			sql = "SELECT role_pk FROM roles WHERE role = %s;"
-			role_fk = query(sql,(role,))[0][0]
+			role_fk = query(sql,(role,))
 			sql = "INSERT INTO users(username,password,role_fk) VALUES (%s, %s, %s);"
 			query(sql,(username,password,role_fk[0][0]))
 			session['user'] = username
@@ -100,17 +100,17 @@ def add_asset():
 			return render_template('dashboard.html')
 		else:
 			sql = "SELECT fac_pk FROM facilities where fac_code = %s;"
-			fac_fk = (query(sql,(fac_code,)))[0][0]
+			fac_fk = (query(sql,(fac_code,)))
 			sql = "INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES (%s, %s,%s,%s);"
-			query(sql,(asset_tag,description,fac_fk,'FALSE'))
+			query(sql,(asset_tag,description,fac_fk[0][0],'FALSE'))
 			session['msg'] = 'asset created!'
 			return render_template('dashboard.html')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
 def dispose_asset():
 	sql = "SELECT * FROM assets WHERE disposed = 'FALSE';"
-	res = query(sql,())[0]
+	res = query(sql,())
 	assets = []
-	for asset in res:
+	for asset in res[0]:
 		assets.append("{}: {}".format(asset[1], asset[2]))
 	#return render_template('dispose_asset.html', assets=assets)
 	if session['role'] != "Logistics Officer":
@@ -137,13 +137,13 @@ def dashboard():
 	if session['role'] == "Logistics Officer":
 		columns=[('Transit ID'),('Asset Tag'),('Source Facility'),('Destination Facilility'),('Approval Date')]
 		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk';"
-		ltasks = query(sql,())[0]
+		ltasks = query(sql,())
 		return render_template('dashboard.html',columns=columns,ltasks = ltasks,ftasks=blank)
 	else:
 		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
 		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE';"
 		ftasks = query(sql,())[0]
-		return render_template('dashboard.html',columns=columns,ltasks = blank,ftasks=ftasks)
+		return render_template('dashboard.html',columns=columns,ltasks[0] = blank,ftasks=ftasks)
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
 	if session['role'] != 'Logistics Officer':
@@ -187,8 +187,8 @@ def approve_req():
 		req_pk = request.args['req_pk']
 		columns=[('request tag'),('Asset tag'),('Source Facility'),('Destination Facility'),('Request Date')]
 		sql = "SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag=%s;"
-		request_data = query(sql,(req_pk,))[0]
-		return render_template('approve_req',columns=columns, req_pk=req_pk, request_data=request_data,)
+		request_data = query(sql,(req_pk,))
+		return render_template('approve_req',columns=columns, req_pk=req_pk, request_data=request_data[0],)
 	if method.request == "POST":
 		decision = request.form['Decision']
 		if (decision == 'Reject'):
@@ -200,7 +200,7 @@ def approve_req():
 			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s:"
 			query(sql,(req_pk,))
 			sql = "INSERT INTO transit(req_fk,asset_tag,source_fk,destination_fk,load_dt,unload_dt) VALUES (%s,%s,%s,%s,'NULL','NULL');"
-			query(sql,(request_data[0],request_data[1],request_data[2],request_data[3]))
+			query(sql,(request_data[0][0],request_data[0][1],request_data[0][2],request_data[0][3]))
 			session['msg'] = 'request approved'
 			return render_template('dashboard.html')
 		
@@ -212,7 +212,7 @@ def update_transit():
 	if request.method=='GET':
 		req_fk=request.form['req_pk']
 		sql = "SELECT load_dt,unload_dt FROM transit WHERE req_fk = %s;"
-		transit = query(sql,(req_fk,))[0]
+		transit = query(sql,(req_fk,))
 		if not (transit):
 			session['msg'] = 'ERROR: transit entry not found'
 			return render_template('dashboard.html')
@@ -221,8 +221,8 @@ def update_transit():
 			return render_template('dashboard.html')
 		columns=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
 		sql = "SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag=%s;"
-		transit_data = query(sql,(req_fk,))[0]
-		return render_template('update_transit.html', columns = columns, transit_data = transit_data)
+		transit_data = query(sql,(req_fk,))
+		return render_template('update_transit.html', columns = columns, transit_data = transit_data[0])
 	if request.method=='POST':
 		req_fk=request.form['req_fk']
 		load = request.form['load']
@@ -246,8 +246,8 @@ def asset_report():
 			return render_template('asset_report.html', facilities=facilities,report = report)
 		else:
 			sql = "SELECT a.asset_tag, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk WHERE f.fac_code = %s;"
-			report = query(sql,(facility[0][0]))[0]
-			return render_template('asset_report.html', facilities=facilities,report = report)
+			report = query(sql,(facility[0][0]))
+			return render_template('asset_report.html', facilities=facilities, report = report[0])
 @app.route('/transfer_report', methods=['GET','POST'])
 def transfer_report():
 	return render_template('transfer_report.html')
