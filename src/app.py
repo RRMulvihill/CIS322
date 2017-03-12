@@ -229,7 +229,7 @@ def update_transit():
 		return render_template('dashboard.html')
 @app.route('/asset_report', methods=['GET','POST'])
 def asset_report():
-	sql = "SELECT fac_name, FROM facilities;"
+	sql = "SELECT fac_name FROM facilities;"
 	facilities = query(sql,())
 	if request.method =='GET':
 		blank=[]
