@@ -119,7 +119,10 @@ def dispose_asset():
 			return render_template('dashboard.html')
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
-	return render_template('dashboard.html')
+	if session['role'] == "Logistics Officer":
+		return render_template('log_dashboard.html')
+	else:
+		return render_template('dashboard.html')
 
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
