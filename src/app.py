@@ -157,6 +157,8 @@ def transfer_req():
 		tag = request.form['tag']
 		user_pk = session['user_pk']
 		timestamp = datetime.now() 
+		sql = "SELECT asset_pk FROM assets WHERE asset_tag = %s;"
+		asset_fk = query(sql,(tag,))[0][0]
 		sql = "SELECT fac_code FROM facilities WHERE fac_code = %s;"
 		src = (sql,(source,))
 		if not (src):
