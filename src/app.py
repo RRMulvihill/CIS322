@@ -15,6 +15,7 @@ def login():
 		return render_template('login.html')
 	if request.method == 'POST':
 		username = request.form['uname']
+		session['username'] = username
 		password = request.form['pass']
 		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
 		cur  = conn.cursor()
