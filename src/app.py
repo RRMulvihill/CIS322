@@ -239,7 +239,7 @@ def asset_report():
 		if (facility=='0'):
 			sql = "SELECT a.asset_tag, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk;"
 			report = query(sql,())
-			return render_template('asset_report.html', facilities=facilites,report = report)
+			return render_template('asset_report.html', facilities=facilities,report = report)
 		else:
 			sql = "SELECT a.asset_tag, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk WHERE f.fac_code = %s;"
 			report = query(sql,(facility[0]))
