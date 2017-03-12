@@ -32,6 +32,8 @@ def login():
 	if request.method == 'POST':
 		username = request.form['uname']
 		session['username'] = username
+		sql = "SELECT user_pk FROM users WHERE username = %s;"
+		session['user_pk'] = query(sql,(unsername,))[0]
 		password = request.form['pass']
 		sql = ("SELECT username,password FROM users WHERE username = %s and password = %s;")
 		res = query(sql,(username,password))
