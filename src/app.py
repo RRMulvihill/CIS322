@@ -79,7 +79,7 @@ def add_asset():
 		else:
 			cur.execute("SELECT status_pk FROM asset_at where status = 'at_facility';")
 			fac_fk = cur.fetchone()[0]
-			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s','%s',%s));"%(asset_tag,description,fac_fk,'at_facility'))
+			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s','%s',%s);"%(asset_tag,description,fac_fk,'at_facility'))
 			conn.commit()
 			return render_template('entry_created.html')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
