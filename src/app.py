@@ -6,6 +6,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'secret'
+conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
+cur  = conn.cursor()
 @app.route('/')
 def index():
 	return render_template('login.html')
@@ -17,8 +19,6 @@ def login():
 		username = request.form['uname']
 		session['username'] = username
 		password = request.form['pass']
-		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
-		cur  = conn.cursor()
 		cur.execute("SELECT username,password FROM users WHERE username = '%s' and password = '%s';"%(username,password))
 		if cur.fetchone() is not None:
 			cur.execute("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = '%s';"%(username))
@@ -56,8 +56,6 @@ def add_facility():
 		session['entry_type'] = "Facility"
 		fname = request.form['fname']
 		fcode = request.form['fcode']
-		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
-		cur  = conn.cursor()
 		cur.execute("SELECT fac_name FROM facilities WHERE fac_name = '%s' or fac_code = '%s';"%(fname,fcode))
 		if cur.fetchone() is not None:
 			return render_template('entry_exists.html')
