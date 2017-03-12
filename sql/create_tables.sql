@@ -40,12 +40,14 @@ CREATE TABLE assets (
 
 CREATE TABLE requests (
 	submitter_fk integer REFERENCES users(user_pk),
+	req_tag varchar(16),
 	submit_dt timestamp,
 	fac_fk integer REFERENCES facilities(fac_pk),
 	asset_fk integer REFERENCES assets(asset_pk),
 	approver_fk integer REFERENCES users(user_pk),
 	approved_dt timestamp
 );
+-- I created a tag for requests for users to select wich request they are accepting
 --I used foriegn keys heavily, adding the pk's for assignment8
 --these will connect tables without fear of spelling errors or redundantcy
 --as far as the feilds I referenced the assignment description
