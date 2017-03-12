@@ -14,12 +14,6 @@ CREATE TABLE users (
 --sessons will use the username not an integer id.
 --The varchar feilds are corresponding to the assignemnt instructions "no longer than 16 characters"
 
-CREATE TABLE asset_at (
-	status_pk serial primary key,
-	status varchar(16)
-);
---tracks the state of the asset, initialized to hold  "at facility" and "disposed"
---todo: change this table to a boolean status for assets
 
 CREATE TABLE facilities (
 	fac_pk serial primary key,
@@ -33,10 +27,10 @@ CREATE TABLE assets (
 	asset_tag varchar(16),
 	description text,
 	fac_fk integer REFERENCES facilities(fac_pk),
-	status_fk integer REFERENCES asset_at(status_pk)
+	disposed boolean
 );
 --asset_pk added for requests
---potentialy status_fk could be a boolean to handle disposed elements
+-- disposed boolean created to remove assets_at table
 
 CREATE TABLE requests (
 	req_pk serial primary key,
