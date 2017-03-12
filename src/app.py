@@ -159,12 +159,12 @@ def transfer_req():
 		timestamp = datetime.now() 
 		sql = "SELECT asset_pk FROM assets WHERE asset_tag = %s;"
 		asset_fk = query(sql,(tag,))[0][0]
-		sql = "SELECT fac_code FROM facilities WHERE fac_code = %s;"
+		sql = "SELECT fac_pk FROM facilities WHERE fac_code = %s;"
 		src = (sql,(source,))
 		if not (src):
 			session['msg'] = 'ERROR: Source Facility not found'
 			return render_template('dashboard.html')
-		sql = "SELECT fac_code FROM facilities WHERE fac_code = %s;"
+		sql = "SELECT fac_pk FROM facilities WHERE fac_code = %s;"
 		dst = query(sql,(destination,))
 		if not (dst):
 			session['msg'] = 'ERROR: Destination Facility not found'
@@ -175,7 +175,7 @@ def transfer_req():
 			session['msg'] = 'ERROR: asset tag not found'
 			return render_template('dashboard.html')
 		sql = "INSERT INTO requests(submitter_fk,submit_dt,source_fk,destination_fk,asset_fk,approver_fk,approved_dt,approved) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
-		query(sql,(user_pk,timestamp,source,destination,asset_fk,'NULL','NULL','FALSE'))
+		query(sql,(user_pk,timestamp,src,dst,asset_fk,'NULL','NULL','FALSE'))
 		session['msg'] = 'request created'
 		return render_template('dashboard.html')
 @app.route('/approve_req', methods=['GET','POST'])
