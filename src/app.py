@@ -119,8 +119,10 @@ def dispose_asset():
 			return render_template('dashboard.html')
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
-	#todo, check user role to show nav
-	return render_template('dashboard.html')
+	if session['role'] == "Logistics Officer":
+		return render_template('log_dashboard.html')
+	else:
+		return render_template('dashboard.html')
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
 	if session['role'] != 'Logistics Officer':
@@ -158,7 +160,10 @@ def transfer_req():
 	if session['role'] != 'Facilities Officer':
 		session['error_msg'] = 'Only Facilities Officers can approve Transfer Requests.'
 		return render_template('error.html')
-	
+	if method.request == 'GET':
+		req_tag = request.args['req_tag']
+		columns=[('request tag'),('Asset tag'),('Source Facility'),('Destination Facility'),('Request Date')]
+		cur.execute("SELECT requests.req_tag, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.req_tag=%s"(req_tag))
 
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
