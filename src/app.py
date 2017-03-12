@@ -158,7 +158,7 @@ def transfer_req():
 			if cur.fetchone() is not None:
 			session['error_msg'] = 'asset tag not found'
 			return render_template('error.html')
-		cur.execute("INSERT INTO requests(submitter_fk,submit_dt,fac_fk,approver__fk,approved_dt) VALUES ('%s', '%s'));"%(user_pk,timestamp,destination,'NULL','NULL'))
+		cur.execute("INSERT INTO requests(submitter_fk,submit_dt,fac_fk,approver__fk,approved_dt,approved) VALUES ('%s', '%s'));"%(user_pk,timestamp,destination,'NULL','NULL','FALSE'))
 		conn.commit()
 		session['entry'] = 'request'
 		return render_template('entry_created.html') 
@@ -190,38 +190,28 @@ def update_transit():
 	if session['role'] != 'Logistics Officer':
 		session['error_msg'] = 'Only Logistics Officers May make Updates Transits.'
 		return render_template('error.html')
-	
 	if request.method=='GET':
-       		req_pk=request.args['req_pk']
-		cur.excecute("SELECT req_fk FROM transits WHERE 
-		
-        	columns=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
-		cur.excecute("SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag='%s'"(req_pk))
-		requestData=cur.fetchall()
-        	return render_template('update_transit.html', update_msg=session['msg'], tableheader=headers, request=requestData, request_fk=requestPk)
-    	
+		req_fk=request.form['req_pk']
+		cur.excecute("SELECT load_dt,unload_dt FROM transit WHERE req_fk = '%s'"%(req_fk))
+		transit = cur.fetchone()
+		if transit is None:
+			session['error_msg'] = 'transit entry not found'
+			return render_template('error.html')
+		if transit[1] != null:
+			session['error_msg'] = 'transit has already been unloaded'
+			return render_template('error.html')
+		columns=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
+		cur.excecute("SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag='%s'"(req_fk))
+		transit_data = cur.fetchall()
+		return render_template('update_transit.html', columns = columns, transit_data = transit_data)
 	if request.method=='POST':
-		req_pk=request.form.get('req_pk')
-        	load=request.form.get('load')
-        	unload=request.form.get('unload')
-        	if (load and unload):
-            		if (load < unload):
-				cur.excecute("UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = '%s'"%(req_pk,load,unload))
-				cur.commit()
-                		session['msg']="Transit request updated"
-		else:
-		session['error_msg']="Load date must be before unload date"
-			  
-        	elif (load):
-            		sqlSchedule="UPDATE asset_transfers SET load=%s where request_fk=%s;"
-            		lostQuery(sqlSchedule, (load, requestPk))
-            		session['msg']="Transit request updated"
-        	elif (unload):
-            		sqlSchedule="UPDATE asset_transfers SET unload=%s where request_fk=%s;"
-            		lostQuery(sqlSchedule, (unload, requestPk))
-            		session['msg']="Transit request updated"
-        	return redirect(url_for('dashboard'))
-
+		req_fk=request.form['req_fk']
+		load = request.form['load']
+		unload = request.form['unload']
+		cur.excecute("UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = '%s'"%(req_fk,load,unload))
+		cur.commit()
+		session['msg'] = 'Transit Request Updated!'
+		return render_template('dashboard.html')
 	
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
