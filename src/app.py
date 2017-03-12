@@ -33,7 +33,7 @@ def login():
 		username = request.form['uname']
 		session['username'] = username
 		password = request.form['pass']
-		sql = ("SELECT username,password FROM users WHERE username = '%s' and password = '%s';)
+		sql = ("SELECT username,password FROM users WHERE username = '%s' and password = '%s';")
 		res = query(sql,(username,password))
 		if not (res):
 			sql = ("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = '%s';")
