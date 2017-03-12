@@ -47,10 +47,10 @@ def create_user():
 			conn.commit()
 			session['user'] = username
 			return render_template('entry_created.html')
-@app.route('/create_facility', methods=['GET', 'POST'])
-def create_facility():
+@app.route('/add_facility', methods=['GET', 'POST'])
+def add_facility():
 	if request.method =='GET':
-		return render_template('create_facility.html')
+		return render_template('add_facility.html')
 	if request.method == 'POST':
 		session['entry_type'] = "Facility"
 		fname = request.form['fname']
@@ -124,7 +124,7 @@ def dashboard():
 		columns=[('Transit ID'),('Asset Tag'),('Source Facility'),('Destination Facilility'),('Approval Date')]
 		cur.execute("SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk")
 		ltasks = cur.fetchall()
-		return render_template('log_dashboard.html',columns=columns,ltasks = ltasks,ftasks=blank)
+		return render_template('dashboard.html',columns=columns,ltasks = ltasks,ftasks=blank)
 	else:
 		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
 		cur.execute("SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE'")
