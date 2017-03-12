@@ -81,7 +81,7 @@ def add_asset():
 		if cur.fetchone() is not None:
 			return render_template('entry_exists.html')
 		else:
-			cur.execute("SELECT fac_pk FROM facilities where fac_name = '%s'"%(facility))
+			cur.execute("SELECT fac_pk FROM facilities where fac_name = '%s'"%(fac_fk))
 			fac_fk = cur.fetchone()
 			cur.execute("SELECT status_pk FROM asset_at where status = 'at_facility';")
 			fac_fk = cur.fetchone()[0]
