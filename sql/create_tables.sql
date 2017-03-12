@@ -46,7 +46,7 @@ CREATE TABLE requests (
 	destination_fk integer REFERENCES facilities(fac_pk),
 	asset_fk integer REFERENCES assets(asset_pk),
 	approver_fk integer REFERENCES users(user_pk),
-	approved_dt timestamp
+	approved_dt timestamp,
 	aprroved boolean
 );
 -- I created a pk for requests for users to select wich request they are accepting and to link to transit
@@ -56,7 +56,7 @@ CREATE TABLE requests (
 
 CREATE TABLE transits (
 	req_fk integer REFERENCES requests(req_pk),
-	asset_fk REFERENCES assets(asset_tag),
+	asset_fk integer REFERENCES assets(asset_pk),
 	source_fk integer REFERENCES facilities(fac_pk),
 	destination_fk integer REFERENCES facilities(fac_pk),
 	load_dt timestamp,
