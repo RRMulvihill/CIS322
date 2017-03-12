@@ -79,7 +79,7 @@ def add_asset():
 		else:
 			cur.execute("SELECT status_pk FROM asset_at where status = 'at_facility';")
 			fac_fk = cur.fetchone()[0]
-			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s','%s','%s');"%(asset_tag,description,fac_fk,'at_facility'))
+			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES ('%s', '%s','%s','%s');"%(asset_tag,description,fac_fk,'FALSE'))
 			conn.commit()
 			return render_template('entry_created.html')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
@@ -107,9 +107,7 @@ def dispose_asset():
 		if cur.fetchone() is None:
 			return render_template('error.html')
 		else:
-			cur.execute("SELECT status_pk FROM asset_at where status = 'disposed';")
-			status_fk = cur.fetchone()[0]
-			cur.execute("UPDATE assets SET status_fk = '%s' WHERE asset_tag = '%s';"%(status_fk,tag))
+			cur.execute("UPDATE assets SET disposed = 'TRUE' WHERE asset_tag = '%s';"%(tag))
 			conn.commit()
 			return render_template('dashboard.html')
 @app.route('/dashboard', methods=['GET',])
