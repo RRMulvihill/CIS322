@@ -37,7 +37,7 @@ def login():
 		res = query(sql,(username,password))
 		if (res):
 			sql = ("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = %s;")
-			session['role'] = query(sql,username)
+			session['role'] = query(sql,(,username))
 			return render_template('dashboard.html')
 		else:
 			session['error_msg'] = 'Error! User does not exist'
