@@ -197,21 +197,21 @@ def update_transit():
 		
         	columns=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
 		cur.excecute("SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag='%s'"(req_pk))
-        	requestData=cur.fetchall()
+		requestData=cur.fetchall()
         	return render_template('update_transit.html', update_msg=session['msg'], tableheader=headers, request=requestData, request_fk=requestPk)
     	
 	if request.method=='POST':
-        	req_f=request.form.get('req_pk')
+		req_pk=request.form.get('req_pk')
         	load=request.form.get('load')
         	unload=request.form.get('unload')
         	if (load and unload):
             		if (load < unload):
-				cur.excecute("UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = '%s'"%(
-                	sqlSchedule="UPDATE asset_transfers SET load=%s, unload=%s where request_fk=%s;"
-                	lostQuery(sqlSchedule, (load, unload, requestPk))
-                	session['msg']="Transit request updated"
-            	else:
-                	session['msg']="Load date must be before unload date"
+				cur.excecute("UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = '%s'"%(req_pk,load,unload))
+				cur.commit()
+                		session['msg']="Transit request updated"
+		else:
+		session['error_msg']="Load date must be before unload date"
+			  
         	elif (load):
             		sqlSchedule="UPDATE asset_transfers SET load=%s where request_fk=%s;"
             		lostQuery(sqlSchedule, (load, requestPk))
