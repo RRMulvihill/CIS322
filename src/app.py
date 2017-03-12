@@ -40,7 +40,7 @@ def login():
 			session['role'] = query(sql,username)
 			return render_template('dashboard.html')
 		else:
-		       session['error_msg'] = 'Error! User already exists'
+			session['error_msg'] = 'Error! User already exists'
 			return render_template('error.html')
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
