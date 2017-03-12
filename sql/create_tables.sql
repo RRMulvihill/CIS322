@@ -41,7 +41,7 @@ CREATE TABLE requests (
 	asset_fk integer REFERENCES assets(asset_pk),
 	approver_fk integer REFERENCES users(user_pk),
 	approved_dt timestamp,
-	aprroved boolean
+	approved boolean
 );
 -- I created a pk for requests for users to select wich request they are accepting and to link to transit
 --I used foriegn keys heavily, adding the pk's for assignment8
