@@ -74,18 +74,16 @@ def add_asset():
 		asset_tag = request.form['tag']
 		description = request.form['desc']
 		date = request.form['date']
-		fac_fk = request.form['fac']
-		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
-		cur  = conn.cursor()
+		fac_code = request.form['fac']
 		cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(asset_tag))
 		if cur.fetchone() is not None:
 			return render_template('entry_exists.html')
 		else:
-			cur.execute("SELECT fac_pk FROM facilities where fac_name = '%s'"%(fac_fk))
+			cur.execute("SELECT fac_pk FROM facilities where fac_code = '%s'"%(fac_code))
 			fac_fk = cur.fetchone()
 			cur.execute("SELECT status_pk FROM asset_at where status = 'at_facility';")
 			fac_fk = cur.fetchone()[0]
-			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s','%s'));"%(asset_tag,description,fac_fk,'at_facility'))
+			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s','%s'));"%(asset_tag,description,fac_pk,'at_facility'))
 			conn.commit()
 			return render_template('entry_created.html')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
