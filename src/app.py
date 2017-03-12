@@ -211,6 +211,8 @@ def update_transit():
 		cur.commit()
 		session['msg'] = 'Transit Request Updated!'
 		return render_template('dashboard.html')
-	
+@app.route('/asset_report', methods=['GET','POST'])
+def asset_report():
+	return render_template('asset_report')
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
