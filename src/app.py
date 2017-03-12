@@ -11,7 +11,7 @@ def query(sql,params):
 	conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
 	cur  = conn.cursor()
 	if not (params):
-		cur.excecute(sql)
+		cur.execute(sql)
 	else:
 		cur.execute(sql,params)
 	try:
@@ -106,7 +106,6 @@ def add_asset():
 @app.route('/dispose_asset', methods=['GET', 'POST'])
 def dispose_asset():
 	sql = "SELECT * FROM assets WHERE disposed = 'FALSE';"
-	param = ''
 	res = query(sql,())
 	assets = []
 	for asset in res:
@@ -136,12 +135,12 @@ def dashboard():
 	if session['role'] == "Logistics Officer":
 		columns=[('Transit ID'),('Asset Tag'),('Source Facility'),('Destination Facilility'),('Approval Date')]
 		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk"
-		ltasks = query(sql,)
+		ltasks = query(sql,())
 		return render_template('dashboard.html',columns=columns,ltasks = ltasks,ftasks=blank)
 	else:
 		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
 		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE'"
-		ftasks = query(sql,)
+		ftasks = query(sql,())
 		return render_template('dashboard.html',columns=columns,ltasks = blank,ftasks=ftasks)
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
