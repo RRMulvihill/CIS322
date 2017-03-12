@@ -41,7 +41,6 @@ CREATE TABLE assets (
 CREATE TABLE requests (
 	req_pk serial primary key,
 	submitter_fk integer REFERENCES users(user_pk),
-	req_tag varchar(16),
 	submit_dt timestamp,
 	source_fk integer REFERENCES facilities(fac_pk),
 	destination_fk integer REFERENCES facilities(fac_pk),
@@ -50,19 +49,20 @@ CREATE TABLE requests (
 	approved_dt timestamp
 	aprroved boolean
 );
--- I created a tag for requests for users to select wich request they are accepting
+-- I created a pk for requests for users to select wich request they are accepting and to link to transit
 --I used foriegn keys heavily, adding the pk's for assignment8
 --these will connect tables without fear of spelling errors or redundantcy
 --I decided to keep all fo my transit information inside of my request to make the verly long req_approval more simple
 
-CREATE TABLE transit (
+CREATE TABLE transits (
 	req_fk integer REFERENCES requests(req_pk),
+	asset_fk REFERENCES assets(asset_tag),
 	source_fk integer REFERENCES facilities(fac_pk),
 	destination_fk integer REFERENCES facilities(fac_pk),
 	load_dt timestamp,
 	unload_dt timestamp
 );
---the fk is ussed to link transit with requests,
+--the fk is used to link transit with requests,
 --all other info is the basic feilds from the description
 
 --initialize database with roles and statuses 
