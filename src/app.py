@@ -160,7 +160,7 @@ def transfer_req():
 		sql = "SELECT asset_pk FROM assets WHERE asset_tag = %s;"
 		asset_fk = query(sql,(tag,))[0][0]
 		sql = "SELECT fac_pk FROM facilities WHERE fac_code = %s;"
-		src = (sql,(source,))
+		src = query(sql,(source,))
 		if not (src):
 			session['msg'] = 'ERROR: Source Facility not found'
 			return render_template('dashboard.html')
