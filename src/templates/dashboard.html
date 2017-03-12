@@ -1,16 +1,41 @@
 <html>
-<body>
-	<h2>Dashboard</h2>
-	<p>Logged in as {{session.user}}</p>
-	<nav class="navbar navbar-default" id="nav">
-  		<div class="container-fluid">
-    		<ul class="nav navbar-nav">
-      		<li><a href="/asset_report">asset_report</a></li>
-		<li><a href="/transfer_report">transfer_report</a></li>
-		<li><a href="/add_asset">add_asset</a></li>
-		<li><a href="/add_facility">add_facility</a></li>
-    		</ul>
- 		</div>
-	</nav>
-</body>
-</html
+	<body><h1>Welcome {{username}}</h1>
+		<div align="right">
+			<form name = 'logout' action="{{url_for('logout')}}">
+				<input type="submit" value='Logout {{username}}' name='logout' />
+			</form>
+		</div>
+		<table style="width:100%">
+			<tr>
+				{% for col in columns %}
+				<th>{{col}}</ th>
+				{% endfor %}
+			</tr>
+			{% for task in ltasks %}
+			<tr><td><a href="{{url_for('update_transit')}}?request_pk={{line[0]}}"> {{line[1]}}</a> </td> <td>{{line[2]}}</td> <td>{{line[3]}}</td> <td>{{line[4]}}</td> <td>{{line[5]}}</td></tr>
+			{% endfor %}
+			{% for task in ftasks %}
+			<tr><td><a href="{{url_for('approve_req')}}?request_pk={{line[0]}}"> {{line[1]}}</a> </td> <td>{{line[2]}}</td> <td>{{line[3]}}</td> <td>{{line[4]}}</td> <td>{{line[5]}}</td></tr>
+			{% endfor %}
+		</table>
+
+		<form name = 'asset_report' action="{{url_for('asset_report')}}">
+			<input type="submit" value='Asset Report' name='asset_report' />
+		</form>
+		<form name = 'transfer_report' action="{{url_for('transfer_report')}}">
+			<input type="submit" value='Transfer Report' name='transfer_report' />
+		</form>
+		<form name = 'add_asset' action="{{url_for('add_asset')}}">
+			<input type="submit" value='Add Asset' name='add_asset' />
+		</form>
+		<form name = 'add_facility' action="{{url_for('add_facility')}}">
+			<input type="submit" value='Add Facility' name='add_facility' />
+		</form>
+		<form name = 'dispose_asset' action="{{url_for('dispose_asset')}}">
+			<input type="submit" value='Dispose Asset' name='dispose_asset' />
+		</form>
+		<form name = 'transfer_req' action="{{url_for('transfer_req')}}">
+			<input type="submit" value='Transfer Request' name='transfer_req' />
+		</form>
+	</body>
+</html>
