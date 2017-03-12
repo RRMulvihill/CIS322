@@ -51,17 +51,16 @@ def create_user():
 		username = request.form['uname']
 		password = request.form['pass']
 		role = request.form['role']
-		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
-		cur  = conn.cursor()
-		cur.execute("SELECT username FROM users WHERE username = '%s';"%(username))
-		if cur.fetchone() is not None:
+		sql = ("SELECT username FROM users WHERE username = '%s';")
+		user = query(sql,(username,))
+		if (user):
 			return render_template('entry_exists.html')
 		else:
 			#get role_fk
-			cur.execute("SELECT role_pk FROM roles WHERE role = '%s';"%(role))
-			role_fk = cur.fetchone()
-			cur.execute("INSERT INTO users(username,password,role_fk) VALUES ('%s', '%s', '%s');"%(username,password,role_fk[0]))
-			conn.commit()
+			sql = "SELECT role_pk FROM roles WHERE role = '%s';"
+			role_fk = query(sql,(role,))
+			sql = "INSERT INTO users(username,password,role_fk) VALUES ('%s', '%s', '%s');"
+			query(sql,(username,password,role_fk[0]))
 			session['user'] = username
 			return render_template('entry_created.html')
 @app.route('/add_facility', methods=['GET', 'POST'])
@@ -89,15 +88,18 @@ def add_asset():
 		description = request.form['desc']
 		date = request.form['date']
 		fac_code = request.form['fac']
-		cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(asset_tag))
-		if cur.fetchone() is not None:
-			return render_template('entry_exists.html')
+		sql = "SELECT asset_tag FROM assets WHERE asset_tag = '%s';"
+		tag = query(sql,(asset_tag))
+		if (tag):
+			session['msg'] = 'asset already exists with the given tag'
+			return render_template('dashboard.html')
 		else:
-			cur.execute("SELECT fac_pk FROM facilities where fac_code = '%s'"%(fac_code))
-			fac_fk = cur.fetchone()[0]
-			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES ('%s', '%s','%s','%s');"%(asset_tag,description,fac_fk,'FALSE'))
-			conn.commit()
-			return render_template('entry_created.html')  
+			sql = "SELECT fac_pk FROM facilities where fac_code = '%s';"
+			fac_fk = (query(sql,(fac_code,)))[0]
+			sql = "INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES ('%s', '%s','%s','%s');"
+			query(sql,(asset_tag,description,fac_fk,'FALSE'))
+			session['msg'] = 'asset created!'
+			return render_template('dashboard.html')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
 def dispose_asset():
 	cur.execute("SELECT * FROM assets WHERE disposed = 'FALSE';")
@@ -114,33 +116,34 @@ def dispose_asset():
 	if request.method == 'POST':
 		session['entry_type'] = "asset"
 		asset_tag = request.form['tag']
-		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
-		cur  = conn.cursor()
-		cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(asset_tag))
-		if cur.fetchone() is None:
-			return render_template('error.html')
+		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
+		tag_exists = query(sql,(asset_tag,))
+		if not (tag_exists):
+			session['msg'] = 'Asset not found!'
+			return render_template('dashboard.html.)
 		else:
-			cur.execute("UPDATE assets SET disposed = 'TRUE' WHERE asset_tag = '%s';"%(tag))
-			conn.commit()
+			sql = "UPDATE assets SET disposed = 'TRUE' WHERE asset_tag = %s;"
+			query(sql,(tag,))
+			session['msg'] = 'Asset removed'
 			return render_template('dashboard.html')
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
 	blank=iter([])
 	if session['role'] == "Logistics Officer":
 		columns=[('Transit ID'),('Asset Tag'),('Source Facility'),('Destination Facilility'),('Approval Date')]
-		cur.execute("SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk")
-		ltasks = cur.fetchall()
+		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk"
+		ltasks = query(sql,(,))
 		return render_template('dashboard.html',columns=columns,ltasks = ltasks,ftasks=blank)
 	else:
 		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
-		cur.execute("SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE'")
-		ftasks = cur.fetchall()
+		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE'"
+		ftasks = query(sql(,))
 		return render_template('dashboard.html',columns=columns,ltasks = blank,ftasks=ftasks)
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
 	if session['role'] != 'Logistics Officer':
-		session['error_msg'] = 'Only Logistics Officers May make Transfer Requests, nice try Larry.'
-		return render_template('error.html')
+		session['msg'] = 'ERROR: Only Logistics Officers May make Transfer Requests, nice try Larry.'
+		return render_template('dashboard.html')
 	if request.method == 'GET':
 		return render_template('transfer_req.html')
 	if request.method == 'POST':
@@ -148,25 +151,28 @@ def transfer_req():
 		destination = request.form['destination']
 		tag = request.form['tag']
 		user_pk = session['user_pk']
-		conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
-		cur  = conn.cursor()
 		timestamp = datetime.now()
-		cur.execute("SELECT fac_code FROM facilities WHERE fac_code = '%s';"%(source))
-		if cur.fetchone() is None:
-			session['error_msg'] = 'Source Facility not found'
-			return render_template('error.html')
-		cur.execute("SELECT fac_code FROM facilities WHERE fac_code = '%s';"%(destination))	
-		if cur.fetchone() is None:
-			session['error_msg'] = 'Destination Facility not found'
-			return render_template('error.html')
-		cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(tag))
-		if cur.fetchone() is None:
-			session['error_msg'] = 'asset tag not found'
-			return render_template('error.html')
-		cur.execute("INSERT INTO requests(submitter_fk,submit_dt,fac_fk,approver__fk,approved_dt,approved) VALUES ('%s', '%s'));"%(user_pk,timestamp,destination,'NULL','NULL','FALSE'))
-		conn.commit()
-		session['entry'] = 'request'
-		return render_template('entry_created.html') 
+		sql = "SELECT fac_code FROM facilities WHERE fac_code = %s;"
+		src = (sql,(source,))
+		if not (src):
+			session['msg'] = 'ERROR: Source Facility not found'
+			return render_template('dashboard.html')
+		sql = "SELECT fac_code FROM facilities WHERE fac_code = %s;"
+		dst = query(sql,(destination,))
+		if not (dst):
+			session['msg'] = 'ERROR: Destination Facility not found'
+			return render_template('dashboard.html')
+		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
+		is_tag = query(sql,(tag,))
+		if not (is_tag):
+			session['msg'] = 'ERROR: asset tag not found'
+			return render_template('dashboard.html')
+		sql = "INSERT INTO requests(submitter_fk,submit_dt,fac_fk,approver__fk,approved_dt,approved) VALUES (%s, %s,;"
+		
+		
+		query(sql,(user_pk,timestamp,destination,'NULL','NULL','FALSE'))
+		session['msg'] = 'request created'
+		return render_template('dashboard.html')
 @app.route('/approve_req', methods=['GET','POST'])
 def approve_req():
 	if session['role'] != 'Facilities Officer':
