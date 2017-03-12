@@ -119,10 +119,17 @@ def dispose_asset():
 			return render_template('dashboard.html')
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
+	blank=iter([])
 	if session['role'] == "Logistics Officer":
-		return render_template('log_dashboard.html')
+		columns=[('Transit ID'),('Asset Tag'),('Source Facility'),('Destination Facilility'),('Approval Date')]
+		cur.excecute("SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk")
+		ltasks = cur.fetchall()
+		return render_template('log_dashboard.html',columns=columns,ltasks = ltasks,ftasks=blank)
 	else:
-		return render_template('dashboard.html')
+		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
+		cur.excecute("SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE'")
+		ftasks = cur.fetchall()
+		return render_template('dashboard.html'columns=columns,ltasks = blank,ftasks=ftasks)
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
 	if session['role'] != 'Logistics Officer':
@@ -165,7 +172,7 @@ def approve_req():
 		columns=[('request tag'),('Asset tag'),('Source Facility'),('Destination Facility'),('Request Date')]
 		cur.execute("SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag='%s'"(req_pk))
 		request_data = cur.fetchall()
-		return render_template('approve_req', request_data=request_data,)
+		return render_template('approve_req',columns=columns, req_pk=req_pk, request_data=request_data,)
 	if method.request == "POST":
 		decision = request.form['Decision']
 		if (decision == 'Reject'):
@@ -178,5 +185,43 @@ def approve_req():
 			cur.commit()
 			return render_template('dashboard.html')
 		
+@app.route('/update_transit', methods=['GET','POST'])
+def update_transit():
+	if session['role'] != 'Logistics Officer':
+		session['error_msg'] = 'Only Logistics Officers May make Updates Transits.'
+		return render_template('error.html')
+	
+	if request.method=='GET':
+       		req_pk=request.args['req_pk']
+		cur.excecute("SELECT req_fk FROM transits WHERE 
+		
+        	columns=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
+		cur.excecute("SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag='%s'"(req_pk))
+        	requestData=cur.fetchall()
+        	return render_template('update_transit.html', update_msg=session['msg'], tableheader=headers, request=requestData, request_fk=requestPk)
+    	
+	if request.method=='POST':
+        	req_f=request.form.get('req_pk')
+        	load=request.form.get('load')
+        	unload=request.form.get('unload')
+        	if (load and unload):
+            		if (load < unload):
+				cur.excecute("UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = '%s'"%(
+                	sqlSchedule="UPDATE asset_transfers SET load=%s, unload=%s where request_fk=%s;"
+                	lostQuery(sqlSchedule, (load, unload, requestPk))
+                	session['msg']="Transit request updated"
+            	else:
+                	session['msg']="Load date must be before unload date"
+        	elif (load):
+            		sqlSchedule="UPDATE asset_transfers SET load=%s where request_fk=%s;"
+            		lostQuery(sqlSchedule, (load, requestPk))
+            		session['msg']="Transit request updated"
+        	elif (unload):
+            		sqlSchedule="UPDATE asset_transfers SET unload=%s where request_fk=%s;"
+            		lostQuery(sqlSchedule, (unload, requestPk))
+            		session['msg']="Transit request updated"
+        	return redirect(url_for('dashboard'))
+
+	
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
