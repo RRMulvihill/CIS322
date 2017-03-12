@@ -13,7 +13,7 @@
         {% endfor %}
       </table>
       <form name='approve_req' action="{{url_for('approve_req')}}" method='POST'>
-         <input type="txt" name="req_tag"/>
+         <input type="hidden" value={{req_pk}} name="req_tag"/>
          <input type="submit" value="Approve" name="Decision" />
          <input type="submit" value="Reject" name="Decision" />
       </form>
