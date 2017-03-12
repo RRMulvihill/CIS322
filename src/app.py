@@ -85,6 +85,7 @@ def add_asset():
 			fac_fk = cur.fetchone()
 			cur.execute("SELECT status_pk FROM asset_at where status = 'at_facility';")
 			fac_fk = cur.fetchone()[0]
+			status_fk = 'at_facility'
 			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s'));"%(asset_tag,description,fac_fk,status_fk))
 			conn.commit()
 			return render_template('entry_created.html')  
