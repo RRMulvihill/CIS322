@@ -155,15 +155,28 @@ def transfer_req():
 		conn.commit()
 		session['entry'] = 'request'
 		return render_template('entry_created.html') 
-@app.route('/transfer_req', methods=['GET','POST'])
-def transfer_req():
+@app.route('/approve_req', methods=['GET','POST'])
+def approve_req():
 	if session['role'] != 'Facilities Officer':
 		session['error_msg'] = 'Only Facilities Officers can approve Transfer Requests.'
 		return render_template('error.html')
 	if method.request == 'GET':
-		req_tag = request.args['req_tag']
+		req_pk = request.args['req_pk']
 		columns=[('request tag'),('Asset tag'),('Source Facility'),('Destination Facility'),('Request Date')]
-		cur.execute("SELECT requests.req_tag, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.req_tag=%s"(req_tag))
-
+		cur.execute("SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag='%s'"(req_pk))
+		request_data = cur.fetchall()
+		return render_template('approve_req', request_data=request_data,)
+	if method.request == "POST":
+		decision = request.form['Decision']
+		if (decision == 'Reject'):
+			cur.execute("DELETE FROM requests WHERE req_pk = '%s'"%(req_pk))
+			conn.commit()
+			return render_template('dashboard.html')
+		else:
+			cur.excecute("UPDATE requests SET approved ='TRUE' WHERE req_pk = '%s'"%(req_pk))
+			cur.excecute("INSERT INTO transit(req_fk,source_fk,destination_fk,load_dt,unload_dt) VALUES ('%s','%s','%s','NULL','NULL')"%(request_data[0],request_data[2],request_data[3]))
+			cur.commit()
+			return render_template('dashboard.html')
+		
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
