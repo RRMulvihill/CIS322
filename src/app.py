@@ -37,10 +37,10 @@ def login():
 		res = query(sql,(username,password))
 		if (res):
 			sql = ("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = %s;")
-			session['role'] = query(sql,(username,))
+			session['role'] = query(sql,(username,))[0]
 			return render_template('dashboard.html')
 		else:
-			session['error_msg'] = 'Error! User does not exist'
+			session['msg'] = 'Error! User does not exist'
 			return render_template('error.html')
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
@@ -102,8 +102,8 @@ def add_asset():
 			return render_template('dashboard.html')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
 def dispose_asset():
-	cur.execute("SELECT * FROM assets WHERE disposed = 'FALSE';")
-	res = cur.fetchall()
+	sql = "SELECT * FROM assets WHERE disposed = 'FALSE';"
+	res = query(sql,)
 	assets = []
 	for asset in res:
 		assets.append("{}: {}".format(asset[1], asset[2]))
