@@ -1,5 +1,9 @@
 <html>
-	<body><h1>Welcome {{session['username']}}</h1>
+	<body><h1>Welcome To LOST</h1>
+		<p>username: {{session['username']}}</p>
+		<p>role: {{session['role']}}</p>
+		<p>{{session['msg']}}
+		
 		<table style="width:100%">
 			<tr>
 				{% for col in columns %}
