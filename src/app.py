@@ -81,9 +81,9 @@ def add_asset():
 		if cur.fetchone() is not None:
 			return render_template('entry_exists.html')
 		else:
-			cur.excecute("SELECT fac_pk FROM facilities where fac_name = '%s'"%(facility))
+			cur.execute("SELECT fac_pk FROM facilities where fac_name = '%s'"%(facility))
 			fac_fk = cur.fetchone()
-			cur.excecute("SELECT status_pk FROM asset_at where status = 'at_facility';")
+			cur.execute("SELECT status_pk FROM asset_at where status = 'at_facility';")
 			fac_fk = cur.fetchone()[0]
 			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,status_fk) VALUES ('%s', '%s'));"%(asset_tag,description,fac_fk,status_fk))
 			conn.commit()
