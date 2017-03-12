@@ -77,6 +77,8 @@ def add_asset():
 		if cur.fetchone() is not None:
 			return render_template('entry_exists.html')
 		else:
+			cur.excecute("SELECT fac_pk FROM facilities where fac_name = '%s'"%(facility))
+			fac_fk = cur.fetchone()[0]
 			cur.execute("INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES ('%s', '%s','%s','%s');"%(asset_tag,description,fac_fk,'FALSE'))
 			conn.commit()
 			return render_template('entry_created.html')  
