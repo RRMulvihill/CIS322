@@ -20,7 +20,7 @@ def login():
 		cur  = conn.cursor()
 		cur.execute("SELECT username,password FROM users WHERE username = '%s' and password = '%s';"%(username,password))
 		if cur.fetchone() is not None:
-			cur.excecute("SELECT role FROM roles JOIN users on roles(role_pk) = users(role_fk) WHERE users.username = '%s';"%(username))
+			cur.execute("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = '%s';"%(username))
 			session['role'] = cur.fetchone()[0]
 			return render_template('dashboard.html')
 		else:
@@ -43,7 +43,7 @@ def create_user():
 			#get role_fk
 			cur.execute("SELECT role_pk FROM roles WHERE role = '%s';"%(role))
 			role_fk = cur.fetchone()
-			cur.execute("INSERT INTO users(username,password,role_fk) VALUES ('%s', '%s', '%s');"%(username,password,role_fk))
+			cur.execute("INSERT INTO users(username,password,role_fk) VALUES ('%s', '%s', '%s');"%(username,password,role_fk[0]))
 			conn.commit()
 			session['user'] = username
 			return render_template('entry_created.html')
@@ -91,7 +91,7 @@ def add_asset():
 def dispose_asset():
 	conn = psycopg2.connect(dbname=dbname, host=dbhost,port=dbport)
 	cur = conn.cursor()
-	cur.excecute("SELECT status_pk FROM asset_at where status = 'disposed';")
+	cur.execute("SELECT status_pk FROM asset_at where status = 'disposed';")
 	status_fk = cur.fetchone()[0]
 	cur.execute("SELECT * FROM assets WHERE status_fk = '%s';"%(status_fk))
 	res = cur.fetchall()
@@ -112,7 +112,7 @@ def dispose_asset():
 		if cur.fetchone() is None:
 			return render_template('error.html')
 		else:
-			cur.excecute("SELECT status_pk FROM asset_at where status = 'disposed';")
+			cur.execute("SELECT status_pk FROM asset_at where status = 'disposed';")
 			status_fk = cur.fetchone()[0]
 			cur.execute("UPDATE assets SET status_fk = '%s' WHERE asset_tag = '%s';"%(status_fk,tag))
 			conn.commit()
@@ -122,14 +122,14 @@ def dashboard():
 	blank=iter([])
 	if session['role'] == "Logistics Officer":
 		columns=[('Transit ID'),('Asset Tag'),('Source Facility'),('Destination Facilility'),('Approval Date')]
-		cur.excecute("SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk")
+		cur.execute("SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk")
 		ltasks = cur.fetchall()
 		return render_template('log_dashboard.html',columns=columns,ltasks = ltasks,ftasks=blank)
 	else:
 		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
-		cur.excecute("SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE'")
+		cur.execute("SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE'")
 		ftasks = cur.fetchall()
-		return render_template('dashboard.html'columns=columns,ltasks = blank,ftasks=ftasks)
+		return render_template('dashboard.html',columns=columns,ltasks = blank,ftasks=ftasks)
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
 	if session['role'] != 'Logistics Officer':
@@ -146,16 +146,15 @@ def transfer_req():
 		cur  = conn.cursor()
 		timestamp = datetime.now()
 		cur.execute("SELECT fac_code FROM facilities WHERE fac_code = '%s';"%(source))
-		if cur.fetchone() is not None:
+		if cur.fetchone() is None:
 			session['error_msg'] = 'Source Facility not found'
 			return render_template('error.html')
-				cur.execute("SELECT fac_code FROM facilities WHERE fac_code = '%s';"%(source))
 		cur.execute("SELECT fac_code FROM facilities WHERE fac_code = '%s';"%(destination))	
-		if cur.fetchone() is not None:
+		if cur.fetchone() is None:
 			session['error_msg'] = 'Destination Facility not found'
 			return render_template('error.html')
 		cur.execute("SELECT asset_tag FROM assets WHERE asset_tag = '%s';"%(tag))
-			if cur.fetchone() is not None:
+		if cur.fetchone() is None:
 			session['error_msg'] = 'asset tag not found'
 			return render_template('error.html')
 		cur.execute("INSERT INTO requests(submitter_fk,submit_dt,fac_fk,approver__fk,approved_dt,approved) VALUES ('%s', '%s'));"%(user_pk,timestamp,destination,'NULL','NULL','FALSE'))
@@ -180,8 +179,8 @@ def approve_req():
 			conn.commit()
 			return render_template('dashboard.html')
 		else:
-			cur.excecute("UPDATE requests SET approved ='TRUE' WHERE req_pk = '%s'"%(req_pk))
-			cur.excecute("INSERT INTO transit(req_fk,source_fk,destination_fk,load_dt,unload_dt) VALUES ('%s','%s','%s','NULL','NULL')"%(request_data[0],request_data[2],request_data[3]))
+			cur.execute("UPDATE requests SET approved ='TRUE' WHERE req_pk = '%s'"%(req_pk))
+			cur.execute("INSERT INTO transit(req_fk,source_fk,destination_fk,load_dt,unload_dt) VALUES ('%s','%s','%s','NULL','NULL')"%(request_data[0],request_data[2],request_data[3]))
 			cur.commit()
 			return render_template('dashboard.html')
 		
@@ -192,7 +191,7 @@ def update_transit():
 		return render_template('error.html')
 	if request.method=='GET':
 		req_fk=request.form['req_pk']
-		cur.excecute("SELECT load_dt,unload_dt FROM transit WHERE req_fk = '%s'"%(req_fk))
+		cur.execute("SELECT load_dt,unload_dt FROM transit WHERE req_fk = '%s'"%(req_fk))
 		transit = cur.fetchone()
 		if transit is None:
 			session['error_msg'] = 'transit entry not found'
@@ -201,14 +200,14 @@ def update_transit():
 			session['error_msg'] = 'transit has already been unloaded'
 			return render_template('error.html')
 		columns=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
-		cur.excecute("SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag='%s'"(req_fk))
+		cur.execute("SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag='%s'"(req_fk))
 		transit_data = cur.fetchall()
 		return render_template('update_transit.html', columns = columns, transit_data = transit_data)
 	if request.method=='POST':
 		req_fk=request.form['req_fk']
 		load = request.form['load']
 		unload = request.form['unload']
-		cur.excecute("UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = '%s'"%(req_fk,load,unload))
+		cur.execute("UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = '%s'"%(req_fk,load,unload))
 		cur.commit()
 		session['msg'] = 'Transit Request Updated!'
 		return render_template('dashboard.html')
