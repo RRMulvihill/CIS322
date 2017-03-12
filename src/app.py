@@ -6,8 +6,22 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'secret'
-conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
-cur  = conn.cursor()
+
+def query(sql,params):
+	conn = psycopg2.connect(dbname=dbname,host=dbhost,port=dbport)
+	cur  = conn.cursor()
+	if not (params):
+		cur.excecute(sql)
+	else:
+		cur.execute(sql,params)
+	try:
+		result = cur.fetchall()
+	except psycopg2.ProgrammingError:
+		result = ''
+	conn.commit()
+	cur.close()
+	con.close()
+	return result
 @app.route('/')
 def index():
 	return render_template('login.html')
@@ -19,13 +33,15 @@ def login():
 		username = request.form['uname']
 		session['username'] = username
 		password = request.form['pass']
-		cur.execute("SELECT username,password FROM users WHERE username = '%s' and password = '%s';"%(username,password))
-		if cur.fetchone() is not None:
-			cur.execute("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = '%s';"%(username))
-			session['role'] = cur.fetchone()[0]
+		sql = ("SELECT username,password FROM users WHERE username = '%s' and password = '%s';)
+		res = query(sql,(username,password))
+		if not (res):
+			sql = ("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = '%s';")
+		        session['role'] = query(sql,username)
 			return render_template('dashboard.html')
 		else:
-			return render_template('no_user.html')
+		       session['error_msg'] = 'Error! User already exists'
+			return render_template('error.html')
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
 	if request.method =='GET':
