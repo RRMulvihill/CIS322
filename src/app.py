@@ -84,18 +84,15 @@ def add_asset():
 			return render_template('entry_created.html')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
 def dispose_asset():
-	conn = psycopg2.connect(dbname=dbname, host=dbhost,port=dbport)
-	cur = conn.cursor()
-	cur.execute("SELECT status_pk FROM asset_at where status = 'disposed';")
-	status_fk = cur.fetchone()[0]
-	cur.execute("SELECT * FROM assets WHERE status_fk = '%s';"%(status_fk))
+	cur.execute("SELECT * FROM assets WHERE disposed = 'FALSE';")
 	res = cur.fetchall()
 	assets = []
 	for asset in res:
 		assets.append("{}: {}".format(asset[1], asset[2]))
 	#return render_template('dispose_asset.html', assets=assets)
 	if session['role'] != "Logistics Officer":
-		return render_template('access_denied.html')
+		session['msg'] = 'Error! Access Denied for non Logistics Officers"
+		return render_template('dashboard.html')
 	if request.method =='GET':
 		return render_template('dispose_asset.html')
 	if request.method == 'POST':
