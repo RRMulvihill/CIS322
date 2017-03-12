@@ -214,8 +214,8 @@ def update_transit():
 @app.route('/asset_report', methods=['GET','POST'])
 def asset_report():
 	return render_template('asset_report.html')
-@app.route('/transit_report', methods=['GET','POST'])
-def transit_report():
-	return render_template('transit_report.html')
+@app.route('/transfer_report', methods=['GET','POST'])
+def transfer_report():
+	return render_template('transfer_report.html')
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
