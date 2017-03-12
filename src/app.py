@@ -20,7 +20,7 @@ def query(sql,params):
 		result = ''
 	conn.commit()
 	cur.close()
-	con.close()
+	conn.close()
 	return result
 @app.route('/')
 def index():
