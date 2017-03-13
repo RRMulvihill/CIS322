@@ -1,0 +1,36 @@
+<html>
+	<body><h1>Welcome To LOST</h1>
+		<p>username: {{session['username']}}</p>
+		<p>user_pk = {{session['user_pk']}}</p>
+		<p>role: {{session['role']}}</p>
+		<p>Message: {{session['msg']}} </p>
+		
+		<table style="width:100%">
+			<tr>
+        {% for column in {{session['columns']}} %}
+				<th>{{column}}</ th>
+        {% endfor %}
+			</tr>
+			
+		</table>
+
+		<form name = 'asset_report' action="{{url_for('asset_report')}}">
+			<input type="submit" value='Asset Report' name='asset_report' />
+		</form>
+		<form name = 'transfer_report' action="{{url_for('transfer_report')}}">
+			<input type="submit" value='Transfer Report' name='transfer_report' />
+		</form>
+		<form name = 'add_asset' action="{{url_for('add_asset')}}">
+			<input type="submit" value='Add Asset' name='add_asset' />
+		</form>
+		<form name = 'add_facility' action="{{url_for('add_facility')}}">
+			<input type="submit" value='Add Facility' name='add_facility' />
+		</form>
+		<form name = 'dispose_asset' action="{{url_for('dispose_asset')}}">
+			<input type="submit" value='Dispose Asset' name='dispose_asset' />
+		</form>
+		<form name = 'transfer_req' action="{{url_for('transfer_req')}}">
+			<input type="submit" value='Transfer Request' name='transfer_req' />
+		</form>
+	</body>
+</html>
