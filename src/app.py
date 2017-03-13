@@ -133,7 +133,7 @@ def dispose_asset():
 			return render_template('dashboard.html')
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
-	blank=iter([])
+	blank=[]
 	if session['role'] == "Logistics Officer":
 		columns=[('Transit ID'),('Asset Tag'),('Source Facility'),('Destination Facilility'),('Approval Date')]
 		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk';"
@@ -142,7 +142,7 @@ def dashboard():
 	else:
 		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
 		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE';"
-		ftasks = query(sql,())[0]
+		ftasks = query(sql,())
 		return render_template('dashboard.html',columns=columns,ltasks = blank,ftasks=ftasks)
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
