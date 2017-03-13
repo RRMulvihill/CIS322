@@ -4,15 +4,9 @@
 		<p>user_pk = {{session['user_pk']}}</p>
 		<p>role: {{session['role']}}</p>
 		<p>Message: {{session['msg']}} </p>
+		<p> {{session['columns']</p>
 		
-		<table style="width:100%">
-			<tr>
-        {% for column in {{session['columns']}} %}
-				<th>{{column}}</ th>
-        {% endfor %}
-			</tr>
-			
-		</table>
+
 
 		<form name = 'asset_report' action="{{url_for('asset_report')}}">
 			<input type="submit" value='Asset Report' name='asset_report' />
