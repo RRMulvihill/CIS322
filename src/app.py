@@ -163,7 +163,7 @@ def dashboard():
 			e['date']=r[4]
 			ftasks.append(e)
 		to_approve = ftasks
-	return render_template('dashboard.html', to_aprove = to_approve, to_load = to_load)
+	return render_template('dashboard.html', to_approve=to_approve, to_load=to_load)
 
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
