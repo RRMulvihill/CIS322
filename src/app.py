@@ -212,10 +212,10 @@ def approve_req():
 		res=dict()
 		res['id']=req_data[0][0]
 		res['tag']=req_data[0][1]
-		res['src']=req_data[2]
-		res['dst']=req_data[3]
-		res['date']=req_data[4]
-		res['approved']=req_data[5]
+		res['src']=req_data[0][2]
+		res['dst']=req_data[0][3]
+		res['date']=req_data[0][4]
+		res['approved']=req_data[0][5]
 		data = res
 		if res['approved'] == 'TRUE':
 			session['msg']='ERROR:request already approved'
