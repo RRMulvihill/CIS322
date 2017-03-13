@@ -140,6 +140,7 @@ def dashboard():
 		sql = "SELECT r.req_pk,a.asset_tag,f.fac_pk,f.fac.pk,r.submit_dt FROM requests AS r INNER JOIN assests AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS f ON f.fac_pk = r.fac_fk:"
 		lres = query(sql,())
 		ltasks = list()
+		session['msg'] = fres[0]
 		for r in lres:
 			e = dict()
 			e['id']=r[0]
