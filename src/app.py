@@ -222,7 +222,7 @@ def approve_req():
 			return render_template('dashboard.html')
 		return render_template('approve_req.html',data=data,)
 	if request.method == "POST":
-		submitted = request.args['submit']
+		submitted = request.form['submit']
 		if submitted =='cancel':
 			pass
 		if submitted=='reject':
