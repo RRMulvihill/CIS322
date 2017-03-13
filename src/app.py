@@ -210,8 +210,8 @@ def approve_req():
 		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac_pk,r.submit_dt,r.approved FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk WHERE r.req_pk = %s;"
 		req_data = query(sql,(req_pk,))
 		res=dict()
-		res['id']=req_data[0]
-		res['tag']=req_data[1]
+		res['id']=req_data[0][0]
+		res['tag']=req_data[0][1]
 		res['src']=req_data[2]
 		res['dst']=req_data[3]
 		res['date']=req_data[4]
