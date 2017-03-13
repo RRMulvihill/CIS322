@@ -148,9 +148,11 @@ def dashboard():
 			e['dst']=r[3]
 			e['date']=r[4]
 			ltasks.append(e)
+		to_load = ltasks
 	if session['role'] == 'Facilities Officer':
 		sql = "SELECT r.req_pk,a.asset_tag,f.fac_pk,f.fac.pk,r.submit_dt FROM requests AS r INNER JOIN assests AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS f ON f.fac_pk = r.fac_fk:"
 		fres = query(sql,())
+		ftasks = list()
 		for r in fres:
 			e = dict()
 			e['id']=r[0]
@@ -158,7 +160,8 @@ def dashboard():
 			e['src']=r[2]
 			e['dst']=r[3]
 			e['date']=r[4]
-			ltasks.append(e)
+			ftasks.append(e)
+		to_approve = ftasks
 	return render_template('dashboard.html', to_aprove = to_approve, to_load = to_load)
 
 @app.route('/transfer_req', methods=['GET','POST'])
