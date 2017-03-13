@@ -220,7 +220,7 @@ def approve_req():
 		if res['approved'] == 'TRUE':
 			session['msg']='ERROR:request already approved'
 			return render_template('dashboard.html')
-		return render_template('approve_req',data=data,)
+		return render_template('approve_req.html',data=data,)
 	if request.method == "POST":
 		if request.form['submit']=='cancel':
 			pass
