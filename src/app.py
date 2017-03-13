@@ -206,19 +206,29 @@ def approve_req():
 		session['msg'] = 'Only Facilities Officers can approve Transfer Requests.'
 		return render_template('dashboard.html')
 	if request.method == 'GET':
-		req_pk = request.args['req_pk']
-		columns=[('request tag'),('Asset tag'),('Source Facility'),('Destination Facility'),('Request Date')]
-		sql = "SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag=%s;"
-		request_data = query(sql,(req_pk,))
-		return render_template('approve_req',columns=columns, req_pk=req_pk, request_data=request_data,)
+		req_pk = int(request.args['id'])
+		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac_pk,r.submit_dt,r.approved FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk WHERE r.req_pk = %s;"
+		req_data = query(sql,(req_pk,))
+		res=dict()
+		res['id']=res[0]
+		res['tag']=res[1]
+		res['src']=res[2]
+		res['dst']=res[3]
+		res['date']=res[4]
+		res['approved']=res[5]
+		if res['approved'] = 'TRUE':
+			session['msg']='ERROR:request already approved'
+			return render_template('dashboard.html')
+		return render_template('approve_req',data=data,)
 	if request.method == "POST":
-		decision = request.form['Decision']
-		if (decision == 'Reject'):
+		if request.form['submit']=='cancel':
+			pass
+		if request.form['submit']=='reject'
 			sql = "DELETE FROM requests WHERE req_pk = %s;"
 			query(sql,(req_pk,))
 			session['msg'] = 'Request Removed'
 			return render_template('dashboard.html')
-		else:
+		if request.form['submit']=='approve':
 			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s:"
 			query(sql,(req_pk,))
 			sql = "INSERT INTO transit(req_fk,asset_tag,source_fk,destination_fk,load_dt,unload_dt) VALUES (%s,%s,%s,%s,'NULL','NULL');"
