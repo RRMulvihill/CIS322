@@ -205,13 +205,13 @@ def approve_req():
 	if session['role'] != 'Facilities Officer':
 		session['msg'] = 'Only Facilities Officers can approve Transfer Requests.'
 		return render_template('dashboard.html')
-	if method.request == 'GET':
+	if request.method == 'GET':
 		req_pk = request.args['req_pk']
 		columns=[('request tag'),('Asset tag'),('Source Facility'),('Destination Facility'),('Request Date')]
 		sql = "SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag=%s;"
 		request_data = query(sql,(req_pk,))
 		return render_template('approve_req',columns=columns, req_pk=req_pk, request_data=request_data,)
-	if method.request == "POST":
+	if request.method == "POST":
 		decision = request.form['Decision']
 		if (decision == 'Reject'):
 			sql = "DELETE FROM requests WHERE req_pk = %s;"
