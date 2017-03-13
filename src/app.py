@@ -216,7 +216,7 @@ def approve_req():
 		res['dst']=res[3]
 		res['date']=res[4]
 		res['approved']=res[5]
-		if res['approved'] = 'TRUE':
+		if res['approved'] == 'TRUE':
 			session['msg']='ERROR:request already approved'
 			return render_template('dashboard.html')
 		return render_template('approve_req',data=data,)
