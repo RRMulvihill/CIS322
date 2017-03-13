@@ -133,17 +133,34 @@ def dispose_asset():
 			return render_template('dashboard.html')
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
-	blank=iter([])
+	to_approve = None
+	to_load = None
+	
 	if session['role'] == 'Logistics Officer':
-		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Approval Date')]
-		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk';"
+		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.submitted_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk';"
 		lres = query(sql,())
-		return render_template('dashboard.html',tableheader=headers, ltasks = lres,ftasks=blank)
+		ltasks = list()
+		for r in lres:
+			e = dict()
+			e['id']=r[0]
+			e['tag']=r[1]
+			e['src']=r[2]
+			e['dst']=r[3]
+			e['date']=r[4]
+			ltasks.append(e)
 	if session['role'] == 'Facilities Officer':
-		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
 		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk WHERE r.approved='FALSE';"
 		fres = query(sql,())
-		return render_template('dashboard.html',tableheader=headers, ltasks = blank,ftasks=fres)
+		for r in fres:
+			e = dict()
+			e['id']=r[0]
+			e['tag']=r[1]
+			e['src']=r[2]
+			e['dst']=r[3]
+			e['date']=r[4]
+			ltasks.append(e)
+	return render_template('dashboard.html', to_aprove = to_approve, to_load = to_load)
+
 @app.route('/transfer_req', methods=['GET','POST'])
 def transfer_req():
 	if session['role'] != 'Logistics Officer':
