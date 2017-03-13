@@ -223,7 +223,7 @@ def approve_req():
 	if request.method == "POST":
 		if request.form['submit']=='cancel':
 			pass
-		if request.form['submit']=='reject'
+		if request.form['submit']=='reject':
 			sql = "DELETE FROM requests WHERE req_pk = %s;"
 			query(sql,(req_pk,))
 			session['msg'] = 'Request Removed'
