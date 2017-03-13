@@ -207,7 +207,7 @@ def approve_req():
 		session['msg'] = 'Only Facilities Officers can approve Transfer Requests.'
 		return render_template('dashboard.html')
 	if request.method == 'GET':
-		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac_pk,r.submit_dt,r.approved FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk WHERE r.req_pk = %s;"
+		sql = "SELECT r.req_pk,a.asset_tag,s.fac_name,d.fac_name,r.submit_dt,r.approved FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk WHERE r.req_pk = %s;"
 		req_data = query(sql,(req_pk,))
 		res=dict()
 		res['id']=req_data[0][0]
@@ -228,14 +228,13 @@ def approve_req():
 			sql = "DELETE FROM requests WHERE req_pk = %s;"
 			query(sql,(req_pk,))
 			session['msg'] = 'Request Removed'
-			return redirect('dashboard.html')
 		if request.form['submit']=='approve':
 			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s:"
 			query(sql,(req_pk,))
 			sql = "INSERT INTO transit(req_fk,asset_tag,source_fk,destination_fk,load_dt,unload_dt) VALUES (%s,%s,%s,%s,'NULL','NULL');"
 			query(sql,(request_data[0][0],request_data[0][1],request_data[0][2],request_data[0][3]))
 			session['msg'] = 'request approved'
-			return redirect('dashboard.html')
+		return redirect('dashboard.html')
 		
 @app.route('/update_transit', methods=['GET','POST'])
 def update_transit():
