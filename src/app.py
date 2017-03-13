@@ -222,13 +222,14 @@ def approve_req():
 			return render_template('dashboard.html')
 		return render_template('approve_req.html',data=data,)
 	if request.method == "POST":
-		if request.form['submit']=='cancel':
+		submitted = request.args['submit']
+		if submitted =='cancel':
 			pass
-		if request.form['submit']=='reject':
+		if submitted=='reject':
 			sql = "DELETE FROM requests WHERE req_pk = %s;"
 			query(sql,(req_pk,))
 			session['msg'] = 'Request Removed'
-		if request.form['submit']=='approve':
+		if submitted =='approve':
 			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s:"
 			query(sql,(req_pk,))
 			sql = "INSERT INTO transit(req_fk,asset_tag,source_fk,destination_fk,load_dt,unload_dt) VALUES (%s,%s,%s,%s,'NULL','NULL');"
