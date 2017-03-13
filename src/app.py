@@ -137,7 +137,7 @@ def dashboard():
 	to_load = None
 	
 	if session['role'] == 'Logistics Officer':
-		sql = "SELECT r.req_pk,a.asset_tag,f.fac_pk,f.fac.pk,r.submit_dt FROM requests AS r INNER JOIN assests AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS f ON f.fac_pk = r.fac_fk:"
+		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac_pk,r.submit_dt FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk;"
 		lres = query(sql,())
 		ltasks = list()
 		session['msg'] = fres[0]
@@ -151,7 +151,7 @@ def dashboard():
 			ltasks.append(e)
 		to_load = ltasks
 	if session['role'] == 'Facilities Officer':
-		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac.pk,r.submit_dt FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk;"
+		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac_pk,r.submit_dt FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk;"
 		fres = query(sql,())
 		session['msg'] = fres[0]
 		ftasks = list()
