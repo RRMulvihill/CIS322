@@ -133,12 +133,12 @@ def dispose_asset():
 			return render_template('dashboard.html')
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
-	blank=[]
+	blank=iter([])
 	if session['role'] == "Logistics Officer":
-		session['columns']=('Transit ID','Asset Tag','Source Facility','Destination Facilility','Approval Date')
+		headers=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Approval Date')]
 		sql = "SELECT transits.req_fk, assets.asset_tag,facilities.fac_name,facilities.fac_name,requests.approved_dt FROM transits AS t INNER JOIN assets AS a ON a.asset_pk = t.asset_fk INNER JOIN facilities AS f ON (f.fac_pk = t.source_fk) or (f.fac_pk = t.destination_fk) INNER JOIN requests AS r ON r.req_pk = t.req_fk';"
 		ltasks = query(sql,())
-		return render_template('dashboard.html',ltasks = ltasks,ftasks=blank)
+		return render_template('dashboard.html',tableheader=headers, ltasks = ltasks,ftasks=blank)
 	else:
 		s =[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
 		session['columns']='stuff'
