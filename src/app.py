@@ -150,7 +150,7 @@ def dashboard():
 			ltasks.append(e)
 		to_load = ltasks
 	if session['role'] == 'Facilities Officer':
-		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac.pk,r.submit_dt FROM requests AS r INNER JOIN assests AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_fk = r.destination_fk:"
+		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac.pk,r.submit_dt FROM requests AS r INNER JOIN assests AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk:"
 		fres = query(sql,())
 		session['msg'] = fres[0]
 		ftasks = list()
