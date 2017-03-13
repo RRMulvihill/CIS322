@@ -1,16 +1,15 @@
 <HTML>
-	<HEAD><TITLE>LOST Approve Transfer</TITLE></HEAD>
+	<HEAD><TITLE>Approve Request</TITLE></HEAD>
 	<BODY>
 	    <TABLE>
-	        <H1>Approval For</H1>
-	        <TR><TD>Transfer ID</TD><TD>{{data['id']}}</TD></TR>
-	        <TR><TD>Asset Tag</TD><TD>{{data['tag']}}</TD></TR>
-	        <TR><TD>Source</TD><TD>{{data['src']}}</TD></TR>
-	        <TR><TD>Destination</TD><TD>{{data['dst']}}</TD></TR>
+	        <H1>Approval Request</H1>
+	        <TR><TD>Request ID:</TD><TD>{{data['id']}}</TD></TR>
+	        <TR><TD>Asset Tag:</TD><TD>{{data['tag']}}</TD></TR>
+	        <TR><TD>Source Facility:</TD><TD>{{data['src']}}</TD></TR>
+	        <TR><TD>Destination Facility:</TD><TD>{{data['dst']}}</TD></TR>
 	    </TABLE>
 	    <FORM action="{{url_for('approve_req')}}" method="POST">
 	        <INPUT TYPE="hidden" NAME="id" VALUE="{{data['id']}}" />
-	        <INPUT TYPE="SUBMIT" NAME="submit" VALUE="approve" />
 	        <INPUT TYPE="SUBMIT" NAME="submit" VALUE="reject" />
 	        <INPUT TYPE="SUBMIT" NAME="submit" VALUE="cancel" />
 	    </FORM>
