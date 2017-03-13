@@ -1,9 +1,9 @@
-<HTML>
-	<HEAD><TITLE>LOST Dashboard</TITLE></HEAD>
-	<BODY>
-		<H1>LOST Dashboard</H1>
-		<p>Welcome {{username}}!</p>
-		<h2>Actions</h2>
+<html>
+	<body><h1>Welcome To LOST</h1>
+		<p>username: {{session['username']}}</p>
+		<p>user_pk = {{session['user_pk']}}</p>
+		<p>role: {{session['role']}}</p>
+		
 		<table>
 		    <tr><td><a href="{{url_for('asset_report')}}">Asset Report</a></td><td>Report of assets by facility</td></tr>
 		    <tr><td><a href="{{url_for('transfer_report')}}">Transfer Report</a></td><td>Report of assets in transit</td></tr>
@@ -34,5 +34,5 @@
 		{% endfor %}
 		</table>
 		{% endif %}
-	</BODY>
-</HTML>
+	</body>
+</html>
