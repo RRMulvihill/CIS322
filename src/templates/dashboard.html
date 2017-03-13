@@ -11,10 +11,10 @@
 				<th>{{col}}</ th>
 				{% endfor %}
 			</tr>
-			{% for task in ltasks %}
+			{% for line in ltasks %}
 			<tr><td><a href="{{url_for('update_transit')}}?request_pk={{line[0]}}"> {{line[1]}}</a> </td> <td>{{line[2]}}</td> <td>{{line[3]}}</td> <td>{{line[4]}}</td> <td>{{line[5]}}</td></tr>
 			{% endfor %}
-			{% for task in ftasks %}
+			{% for line in ftasks %}
 			<tr><td><a href="{{url_for('approve_req')}}?request_pk={{line[0]}}"> {{line[1]}}</a> </td> <td>{{line[2]}}</td> <td>{{line[3]}}</td> <td>{{line[4]}}</td> <td>{{line[5]}}</td></tr>
 			{% endfor %}
 		</table>
