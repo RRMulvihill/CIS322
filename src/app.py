@@ -141,7 +141,7 @@ def dashboard():
 	to_load = None
 	
 	if session['role'] == 'Logistics Officer':
-		sql = "SELECT t.req_fk,a.asset_tag,s.fac_pk,d.fac_pk,r.approved_dt FROM transits AS t INNER JOIN requests AS r ON t.req_fk = r.req_fk INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk;"
+		sql = "SELECT t.req_fk,a.asset_tag,s.fac_pk,d.fac_pk,r.approved_dt FROM transits AS t INNER JOIN requests AS r ON t.req_fk = r.req_pk INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk;"
 		lres = query(sql,())
 		ltasks = list()
 		for r in lres:
