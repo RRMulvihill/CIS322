@@ -205,6 +205,7 @@ def transfer_req():
 		return redirect('dashboard')
 @app.route('/approve_req', methods=['GET','POST'])
 def approve_req():
+	print('starting approval_request')
 	
 	if session['role'] != 'Facilities Officer':
 		session['msg'] = 'Only Facilities Officers can approve Transfer Requests.'
@@ -225,10 +226,11 @@ def approve_req():
 		if res['approved'] == 'TRUE':
 			session['msg']='ERROR:request already approved'
 			return redirect('dashboard')
+		print('finished get')
 		return render_template('approve_req.html',data=data)
-	if request.method=='POST':
-		req_pk = int(request.args['id'])
+	if request.method == 'POST':
 		print('through to post')
+		req_pk = int(request.args['id'])
 		if not 'submit' in request.form:
 			session['msg'] = 'ERROR: Fail on submit'
 		if request.form['submit']=="reject":
