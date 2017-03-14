@@ -10,8 +10,8 @@
 	    </TABLE>
 	    <FORM action="{{url_for('approve_req')}}" method="POST">
 	        <INPUT TYPE="hidden" NAME="id" VALUE="{{data['id']}}" />
+		<INPUT TYPE="SUBMIT" NAME="submit" VALUE="approve" />
 	        <INPUT TYPE="SUBMIT" NAME="submit" VALUE="reject" />
-	        <INPUT TYPE="SUBMIT" NAME="submit" VALUE="cancel" />
 	    </FORM>
 	</BODY>
 </HTML>

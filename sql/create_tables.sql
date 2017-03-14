@@ -50,14 +50,11 @@ CREATE TABLE requests (
 
 CREATE TABLE transits (
 	req_fk integer REFERENCES requests(req_pk),
-	asset_fk integer REFERENCES assets(asset_pk),
-	source_fk integer REFERENCES facilities(fac_pk),
-	destination_fk integer REFERENCES facilities(fac_pk),
 	load_dt timestamp,
 	unload_dt timestamp
 );
 --the fk is used to link transit with requests,
---all other info is the basic feilds from the description
+--all the information the transit needs can be taken from the request it references
 
 --initialize database with roles and statuses 
 INSERT INTO roles (role) VALUES ('Logistics Officer');

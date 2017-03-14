@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, request, url_for, session
+from flask import Flask, render_template, redirect, request, url_for, session
 from config import dbname, dbhost, dbport
 import json
 import psycopg2
@@ -28,6 +28,7 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if request.method =='GET':
+		session['msg'] = ''
 		return render_template('login.html')
 	if request.method == 'POST':
 		username = request.form['uname']
@@ -40,13 +41,14 @@ def login():
 		if (res):
 			sql = ("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = %s;")
 			session['role'] = query(sql,(username,))[0][0]
-			return render_template('dashboard.html')
+			return redirect('dashboard')
 		else:
 			session['msg'] = 'Error! User does not exist'
-			return render_template('error.html')
+			return redirect('login.html')
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
 	if request.method =='GET':
+		session['msg'] = ''
 		return render_template('create_user.html')
 	if request.method == 'POST':
 		session['entry_type'] = "User"
@@ -56,7 +58,8 @@ def create_user():
 		sql = ("SELECT username FROM users WHERE username = %s;")
 		user = query(sql,(username,))
 		if (user):
-			return render_template('entry_exists.html')
+			session['msg'] = 'ERROR: User Exists'
+			return redirect('create_user')
 		else:
 			#get role_fk
 			sql = "SELECT role_pk FROM roles WHERE role = %s;"
@@ -64,7 +67,8 @@ def create_user():
 			sql = "INSERT INTO users(username,password,role_fk) VALUES (%s, %s, %s);"
 			query(sql,(username,password,role_fk[0][0]))
 			session['user'] = username
-			return render_template('entry_created.html')
+			session['msg'] = 'User Created!'
+			return redirect('login')
 @app.route('/add_facility', methods=['GET', 'POST'])
 def add_facility():
 	if request.method =='GET':
@@ -77,12 +81,12 @@ def add_facility():
 		entry_exists = query(sql,(fname,fcode))
 		if (entry_exists):
 			session['msg'] = 'facility already exists'
-			return render_template('dashboard.html')
+			return redirect('dashboard')
 		else:
 			sql = "INSERT INTO facilities(fac_name,fac_code) VALUES (%s, %s);"
 			query(sql,(fname,fcode))
 			session['msg'] = 'Facility Created!'
-			return render_template('dashboard.html')  
+			return redirect('dashboard')  
 @app.route('/add_asset', methods=['GET', 'POST'])
 def add_asset():
 	if request.method =='GET':
@@ -97,14 +101,14 @@ def add_asset():
 		tag = query(sql,(asset_tag))
 		if (tag):
 			session['msg'] = 'asset already exists with the given tag'
-			return render_template('dashboard.html')
+			return redirect('dashboard')
 		else:
 			sql = "SELECT fac_pk FROM facilities where fac_code = %s;"
 			fac_fk = (query(sql,(fac_code,)))
 			sql = "INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES (%s, %s,%s,%s);"
 			query(sql,(asset_tag,description,fac_fk[0][0],'FALSE'))
 			session['msg'] = 'asset created!'
-			return render_template('dashboard.html')  
+			return redirect('dashboard')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
 def dispose_asset():
 	sql = "SELECT * FROM assets WHERE disposed = 'FALSE';"
@@ -125,22 +129,21 @@ def dispose_asset():
 		tag_exists = query(sql,(asset_tag,))
 		if not (tag_exists):
 			session['msg'] = 'Asset not found!'
-			return render_template('dashboard.html') 
+			return redirect('dashboard') 
 		else:
 			sql = "UPDATE assets SET disposed = 'TRUE' WHERE asset_tag = %s;"
 			query(sql,(tag,))
 			session['msg'] = 'Asset removed'
-			return render_template('dashboard.html')
+			return redirect('dashboard')
 @app.route('/dashboard', methods=['GET',])
 def dashboard():
 	to_approve = None
 	to_load = None
 	
 	if session['role'] == 'Logistics Officer':
-		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac_pk,r.submit_dt FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk;"
+		sql = "SELECT t.req_fk,a.asset_tag,s.fac_pk,d.fac_pk,r.approved_dt FROM transits AS t INNER JOIN requests AS r ON t.req_fk = r.req_pk INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk;"
 		lres = query(sql,())
 		ltasks = list()
-		session['msg'] = fres[0]
 		for r in lres:
 			e = dict()
 			e['id']=r[0]
@@ -151,9 +154,8 @@ def dashboard():
 			ltasks.append(e)
 		to_load = ltasks
 	if session['role'] == 'Facilities Officer':
-		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac_pk,r.submit_dt FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk;"
+		sql = "SELECT r.req_pk,a.asset_tag,s.fac_pk,d.fac_pk,r.submit_dt FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk WHERE r.approved = 'f';"
 		fres = query(sql,())
-		session['msg'] = fres[0]
 		ftasks = list()
 		for r in fres:
 			e = dict()
@@ -170,7 +172,7 @@ def dashboard():
 def transfer_req():
 	if session['role'] != 'Logistics Officer':
 		session['msg'] = 'ERROR: Only Logistics Officers May make Transfer Requests, nice try Larry.'
-		return render_template('dashboard.html')
+		return redirect('dashboard')
 	if request.method == 'GET':
 		return render_template('transfer_req.html')
 	if request.method == 'POST':
@@ -183,32 +185,35 @@ def transfer_req():
 		asset_fk = query(sql,(tag,))
 		if not (asset_fk):
 			session['msg'] = 'ERROR: asset tag not found'
-			return render_template('dashboard.html')
+			return redirect('dashboard')
 		sql = "SELECT fac_pk FROM facilities WHERE fac_code = %s;"
 		src = query(sql,(source,))
 		if not (src):
 			session['msg'] = 'ERROR: Source Facility not found'
-			return render_template('dashboard.html')
+			return redirect('dashboard')
 		sql = "SELECT fac_pk FROM facilities WHERE fac_code = %s;"
 		dst = query(sql,(destination,))
 		if not (dst):
 			session['msg'] = 'ERROR: Destination Facility not found'
-			return render_template('dashboard.html')
+			return redirect('dashboard')
 		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
 
 		sql = "INSERT INTO requests(submitter_fk,submit_dt,source_fk,destination_fk,asset_fk,approved) VALUES (%s,%s,%s,%s,%s,%s);"
 		query(sql,(user_pk,timestamp,src[0][0],dst[0][0],asset_fk[0][0],'FALSE'))
 		session['msg'] = 'request created'
-		return render_template('dashboard.html')
+		return redirect('dashboard')
 @app.route('/approve_req', methods=['GET','POST'])
 def approve_req():
-	req_pk = int(request.args['id'])
+	print('starting approval_request')
+	
 	if session['role'] != 'Facilities Officer':
 		session['msg'] = 'Only Facilities Officers can approve Transfer Requests.'
-		return render_template('dashboard.html')
+		return redirect('dashboard')
 	if request.method == 'GET':
+		session['req_pk'] = int(request.args['id'])
+		print('through to get')
 		sql = "SELECT r.req_pk,a.asset_tag,s.fac_name,d.fac_name,r.submit_dt,r.approved FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk WHERE r.req_pk = %s;"
-		req_data = query(sql,(req_pk,))
+		req_data = query(sql,(session['req_pk'],))
 		res=dict()
 		res['id']=req_data[0][0]
 		res['tag']=req_data[0][1]
@@ -219,34 +224,43 @@ def approve_req():
 		data = res
 		if res['approved'] == 'TRUE':
 			session['msg']='ERROR:request already approved'
-			return render_template('dashboard.html')
-		return render_template('approve_req.html',data=data,)
-	if request.method == "POST":
-		submitted = request.form['submit']
-		if submitted=="reject":
-			sql = "DELETE FROM requests WHERE req_pk = %s;"
-			query(sql,(req_pk,))
-			session['msg'] = 'Request Removed'
-		if submitted =="approve":
-			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s:"
-			query(sql,(req_pk,))
-			sql = "INSERT INTO transit(req_fk,asset_tag,source_fk,destination_fk,load_dt,unload_dt) VALUES (%s,%s,%s,%s,'NULL','NULL');"
-			query(sql,(request_data[0][0],request_data[0][1],request_data[0][2],request_data[0][3]))
+			return redirect('dashboard')
+		print('finished get')
+		return render_template('approve_req.html',data=data)
+	if request.method == 'POST':
+		print('through to post')
+		print(request.form['submit'])
+		submitted= request.form['submit']
+		print('submitted: ' + submitted)
+		if not 'submit' in request.form:
+			session['msg'] = 'ERROR: Fail on submit'
+		if submitted =='approve':
+			print('approved')
+			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s;"
+			query(sql,(session['req_pk'],))
+			sql = "INSERT INTO transits(req_fk) VALUES (%s);"
+			query(sql,(session['req_pk'],))
 			session['msg'] = 'request approved'
-		return redirect('dashboard.html')
+		else:
+			print('rejected')
+			sql = "DELETE FROM requests WHERE req_pk = %s;"
+			query(sql,(session['req_pk'],))
+			session['msg'] = 'Request Removed'
+		print('at end of post')
+		return redirect('dashboard')
 		
 @app.route('/update_transit', methods=['GET','POST'])
 def update_transit():
 	if session['role'] != 'Logistics Officer':
-		session['error_msg'] = 'Only Logistics Officers May make Updates Transits.'
-		return render_template('error.html')
+		session['msg'] = 'Only Logistics Officers May make Updates Transits.'
+		return redirect('dashboard')
 	if request.method=='GET':
 		req_fk=request.form['req_pk']
 		sql = "SELECT load_dt,unload_dt FROM transit WHERE req_fk = %s;"
 		transit = query(sql,(req_fk,))
 		if not (transit):
 			session['msg'] = 'ERROR: transit entry not found'
-			return render_template('dashboard.html')
+			return redirect('dashboard')
 		if transit[1] != null:
 			session['msg'] = 'transit has already been unloaded'
 			return render_template('dashboard.html')
@@ -261,7 +275,7 @@ def update_transit():
 		sql = "UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = %s;"
 		query(sql,(req_fk,load,unload))
 		session['msg'] = 'Transit Request Updated!'
-		return render_template('dashboard.html')
+		return redirect('dashboard')
 @app.route('/asset_report', methods=['GET','POST'])
 def asset_report():
 	sql = "SELECT fac_name FROM facilities;"

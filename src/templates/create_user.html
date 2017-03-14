@@ -2,6 +2,7 @@
 	<body><h2>create user</h2>
 	<p>Create New User</p>
 		<p>Enter User</p>
+		<p>{{session['msg']}}</p>
 		<form action="{{url_for('create_user')}}" method="POST">
 			<input type="txt" name="uname"/>
 			<input type="password" name="pass" />
