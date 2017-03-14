@@ -225,12 +225,13 @@ def approve_req():
 			return redirect('dashboard')
 		return render_template('approve_req.html',data=data,)
 	if request.method == "POST":
-		submitted = request.form['submit']
-		if submitted=="reject":
+		if not 'submit' in request.form:
+			session['msg'] = 'ERROR: Fail on submit'
+		if request.form['submit']=="reject":
 			sql = "DELETE FROM requests WHERE req_pk = %s;"
 			query(sql,(req_pk,))
 			session['msg'] = 'Request Removed'
-		if submitted =="approve":
+		if request.form['submit'] =="approve":
 			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s:"
 			query(sql,(req_pk,))
 			sql = "INSERT INTO transit(req_fk,asset_tag,source_fk,destination_fk,load_dt,unload_dt) VALUES (%s,%s,%s,%s,'NULL','NULL');"
