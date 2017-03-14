@@ -77,18 +77,25 @@ INSERT 0 1
 
 26.click asset report
 -desired output = asset report screen
+
 27.above the report option, select ALL to see all assets
 --desired output = asset's tag, description, and facility
+
 28.on the dropbox select and specific facilty or date
 --desired output = assets in that facility on that date (this will not be possible)
+
 29. back out
 --disired output = dashboard
+
 30.click 'transfer report'
 --desired output = transfer report page
+
 31. navigate page to view requests (this will fail)
 --desired output = list of transfer requests (hey, it was extra credit)
+
 32. back to dashboard and logout (hahaha what logout?)
 --desired output logout screen
+
 33.leave me a good review
 --desired output= 'that Riley guy seems really cool and attractive, I should set him up with my hot friend.'
 
