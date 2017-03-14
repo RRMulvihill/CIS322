@@ -269,8 +269,8 @@ def update_transit():
 	if request.method=='POST':
 		load = request.form['load']
 		unload = request.form['unload']
-		sql = "UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = %s;"
-		query(sql,(session['req_fk'],load,unload))
+		sql = "UPDATE transits SET load_dt = %s, unload_dt=%s where req_fk = %s;"
+		query(sql,(load,unload,session['req_fk']))
 		session['msg'] = 'Transit Request Updated!'
 		return redirect('dashboard')
 @app.route('/asset_report', methods=['GET','POST'])
