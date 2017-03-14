@@ -240,7 +240,7 @@ def approve_req():
 			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s;"
 			query(sql,(session['req_pk'],))
 			sql = "INSERT INTO transit(req_fk,,load_dt,unload_dt) VALUES (%s,'NULL','NULL');"
-			query(sql,(session['req_pk']))
+			query(sql,(session['req_pk'],))
 			session['msg'] = 'request approved'
 		else:
 			print('rejected')
