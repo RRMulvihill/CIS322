@@ -1,1 +1,97 @@
+TEST PLAN FOR RILEY MULVIHILL'S LOST
+
+1. clone git repository
+
+2. change directory to CIS322
+
+3.run bash./preflight.sh <databasename> (we are assuming the databse is 'lost')
+/* desired commandline output:
+TABLE CREATED
+TABLE CREATED
+TABLE CREATED
+TABLE CREATED
+TABLE CREATED
+TABLE CREATED
+INSERT 0 1
+INSERT 0 1
+*/
+4.change directory to wsgi
+
+5. run command 'apachectl start'
+
+6.On web browser go to 127.0.0.1:8080 (this should work for you, I have a problem with my VM and have to use http://10.0.0.31:8080/)
+--desired output = Login screen
+
+7.click 'create user' *TODO: replace step 7 with a create user web interface'
+--desired output = create user screen
+
+8.insert username and password and select role, submit
+--desired output -- login screen
+
+9.enter username and password
+--desired output = dashboard
+
+10.click add facility
+--desired output= create facility screen
+
+11.enter a facility name and a facility code, then submit
+--desired output= dashboard, message = 'facility created!'
+
+12. repeat steps 10-11 to create second facility
+
+13. click 'Add Asset'
+--desired output = add_asset page
+
+14. Enter asset tag, description, date, and facility code
+--desired output = dashboard, message = 'entry created!'
+
+15. repeat steps 13-14 to create second asset
+
+16.Be logged in under a logistics officer account (reference steps 7-9)
+
+17. click 'Request Transfer'
+--desired output= transfer_request page
+
+18. Enter a valid source facility code, destination facility code, and asset tage, then submit.
+--desired output = dashboard, message = 'request created'
+
+19. Log in under a facility officer account (steps 7-9)
+--desired output = dashboard, role = Facilities Officer
+
+20. Under 'Asset Transits to Approve', there should be an entry with the info from step 18. Click the req #
+--desired output = arroval request page
+
+21.click 'approve'
+--desired output = 'dashboard', message = 'request removed', the asset transit should now be missing from 'Asset Transits to Approve'
+
+22. complete step 16
+
+23. Under 'Asset Transits to Process' there should be an entry, click its req #
+--desired output = update transit page
+
+24. enter a load and unload time (ex. 3/14/2017), then submit
+--desired output = dashboard, message 'transit request updated!', transit should be missing from 'Asset Transits to Approve'
+
+25.click dispose asset
+--desired output = dispose asset screen (this will fail, cack out to continue)
+
+26.click asset report
+-desired output = asset report screen
+27.above the report option, select ALL to see all assets
+--desired output = asset's tag, description, and facility
+28.on the dropbox select and specific facilty or date
+--desired output = assets in that facility on that date (this will not be possible)
+29. back out
+--disired output = dashboard
+30.click 'transfer report'
+--desired output = transfer report page
+31. navigate page to view requests (this will fail)
+--desired output = list of transfer requests (hey, it was extra credit)
+32. back to dashboard and logout (hahaha what logout?)
+--desired output logout screen
+33.leave me a good review
+--desired output= 'that Riley guy seems really cool and attractive, I should set him up with my hot friend.'
+
+
+
 
