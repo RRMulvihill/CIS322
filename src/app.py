@@ -28,6 +28,7 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if request.method =='GET':
+		session['msg'] = ''
 		return render_template('login.html')
 	if request.method == 'POST':
 		username = request.form['uname']
@@ -40,13 +41,14 @@ def login():
 		if (res):
 			sql = ("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = %s;")
 			session['role'] = query(sql,(username,))[0][0]
-			return render_template('dashboard.html')
+			return redirect('dashboard.html')
 		else:
 			session['msg'] = 'Error! User does not exist'
-			return render_template('error.html')
+			return redirect('login.html')
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
 	if request.method =='GET':
+		session['msg'] = ''
 		return render_template('create_user.html')
 	if request.method == 'POST':
 		session['entry_type'] = "User"
@@ -56,7 +58,8 @@ def create_user():
 		sql = ("SELECT username FROM users WHERE username = %s;")
 		user = query(sql,(username,))
 		if (user):
-			return render_template('entry_exists.html')
+			session['msg'] = 'ERROR: User Exists'
+			return redirect('create_user.html')
 		else:
 			#get role_fk
 			sql = "SELECT role_pk FROM roles WHERE role = %s;"
@@ -64,7 +67,8 @@ def create_user():
 			sql = "INSERT INTO users(username,password,role_fk) VALUES (%s, %s, %s);"
 			query(sql,(username,password,role_fk[0][0]))
 			session['user'] = username
-			return render_template('entry_created.html')
+			session['msg'] = 'User Created!'
+			return redirect('login.html')
 @app.route('/add_facility', methods=['GET', 'POST'])
 def add_facility():
 	if request.method =='GET':
@@ -77,12 +81,12 @@ def add_facility():
 		entry_exists = query(sql,(fname,fcode))
 		if (entry_exists):
 			session['msg'] = 'facility already exists'
-			return render_template('dashboard.html')
+			return redirect('dashboard.html')
 		else:
 			sql = "INSERT INTO facilities(fac_name,fac_code) VALUES (%s, %s);"
 			query(sql,(fname,fcode))
 			session['msg'] = 'Facility Created!'
-			return render_template('dashboard.html')  
+			return redirect('dashboard.html')  
 @app.route('/add_asset', methods=['GET', 'POST'])
 def add_asset():
 	if request.method =='GET':
@@ -97,14 +101,14 @@ def add_asset():
 		tag = query(sql,(asset_tag))
 		if (tag):
 			session['msg'] = 'asset already exists with the given tag'
-			return render_template('dashboard.html')
+			return redirect('dashboard.html')
 		else:
 			sql = "SELECT fac_pk FROM facilities where fac_code = %s;"
 			fac_fk = (query(sql,(fac_code,)))
 			sql = "INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES (%s, %s,%s,%s);"
 			query(sql,(asset_tag,description,fac_fk[0][0],'FALSE'))
 			session['msg'] = 'asset created!'
-			return render_template('dashboard.html')  
+			return redirect('dashboard.html')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
 def dispose_asset():
 	sql = "SELECT * FROM assets WHERE disposed = 'FALSE';"
@@ -170,7 +174,7 @@ def dashboard():
 def transfer_req():
 	if session['role'] != 'Logistics Officer':
 		session['msg'] = 'ERROR: Only Logistics Officers May make Transfer Requests, nice try Larry.'
-		return render_template('dashboard.html')
+		return redirect('dashboard.html')
 	if request.method == 'GET':
 		return render_template('transfer_req.html')
 	if request.method == 'POST':
@@ -199,13 +203,13 @@ def transfer_req():
 		sql = "INSERT INTO requests(submitter_fk,submit_dt,source_fk,destination_fk,asset_fk,approved) VALUES (%s,%s,%s,%s,%s,%s);"
 		query(sql,(user_pk,timestamp,src[0][0],dst[0][0],asset_fk[0][0],'FALSE'))
 		session['msg'] = 'request created'
-		return render_template('dashboard.html')
+		return redirect('dashboard.html')
 @app.route('/approve_req', methods=['GET','POST'])
 def approve_req():
 	req_pk = int(request.args['id'])
 	if session['role'] != 'Facilities Officer':
 		session['msg'] = 'Only Facilities Officers can approve Transfer Requests.'
-		return render_template('dashboard.html')
+		return redirect('dashboard.html')
 	if request.method == 'GET':
 		sql = "SELECT r.req_pk,a.asset_tag,s.fac_name,d.fac_name,r.submit_dt,r.approved FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk WHERE r.req_pk = %s;"
 		req_data = query(sql,(req_pk,))
@@ -261,7 +265,7 @@ def update_transit():
 		sql = "UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = %s;"
 		query(sql,(req_fk,load,unload))
 		session['msg'] = 'Transit Request Updated!'
-		return render_template('dashboard.html')
+		return redirect('dashboard.html')
 @app.route('/asset_report', methods=['GET','POST'])
 def asset_report():
 	sql = "SELECT fac_name FROM facilities;"
