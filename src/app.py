@@ -225,7 +225,7 @@ def approve_req():
 		if res['approved'] == 'TRUE':
 			session['msg']='ERROR:request already approved'
 			return redirect('dashboard')
-		return render_template('approve_req.html',data=data,)
+		return render_template('approve_req.html',data=data)
 	if request.method == "POST":
 		req_pk = int(request.args['id'])
 		print('through to post')
