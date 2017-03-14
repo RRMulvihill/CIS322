@@ -229,11 +229,11 @@ def approve_req():
 		print('finished get')
 		return render_template('approve_req.html',data=data)
 	if request.method == 'POST':
+		req_pk = int(request.args['id'])
 		print('through to post')
 		print(request.form['submit'])
 		submitted= request.form['submit']
 		print('submitted: ' + submitted)
-		req_pk = int(request.args['id'])
 		if not 'submit' in request.form:
 			session['msg'] = 'ERROR: Fail on submit'
 		if submitted =='approve':
