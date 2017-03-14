@@ -235,10 +235,12 @@ def approve_req():
 		if not 'submit' in request.form:
 			session['msg'] = 'ERROR: Fail on submit'
 		if request.form['submit']=="reject":
+			print('rejected')
 			sql = "DELETE FROM requests WHERE req_pk = %s;"
 			query(sql,(req_pk,))
 			session['msg'] = 'Request Removed'
 		if request.form['submit'] =="approve":
+			print('approved')
 			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s:"
 			query(sql,(req_pk,))
 			sql = "INSERT INTO transit(req_fk,asset_tag,source_fk,destination_fk,load_dt,unload_dt) VALUES (%s,%s,%s,%s,'NULL','NULL');"
