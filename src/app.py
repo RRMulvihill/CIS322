@@ -210,6 +210,7 @@ def approve_req():
 		session['msg'] = 'Only Facilities Officers can approve Transfer Requests.'
 		return redirect('dashboard')
 	if request.method == 'GET':
+		print('through to get')
 		sql = "SELECT r.req_pk,a.asset_tag,s.fac_name,d.fac_name,r.submit_dt,r.approved FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk WHERE r.req_pk = %s;"
 		req_data = query(sql,(req_pk,))
 		res=dict()
@@ -225,6 +226,7 @@ def approve_req():
 			return redirect('dashboard')
 		return render_template('approve_req.html',data=data,)
 	if request.method == "POST":
+		print('through to post')
 		if not 'submit' in request.form:
 			session['msg'] = 'ERROR: Fail on submit'
 		if request.form['submit']=="reject":
