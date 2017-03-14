@@ -237,7 +237,7 @@ def approve_req():
 			session['msg'] = 'ERROR: Fail on submit'
 		if submitted =='approve':
 			print('approved')
-			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s:"
+			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s;"
 			query(sql,(session['req_pk'],))
 			sql = "INSERT INTO transit(req_fk,asset_tag,source_fk,destination_fk,load_dt,unload_dt) VALUES (%s,%s,%s,%s,'NULL','NULL');"
 			query(sql,(request_data[0][0],request_data[0][1],request_data[0][2],request_data[0][3]))
