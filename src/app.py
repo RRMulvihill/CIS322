@@ -141,7 +141,7 @@ def dashboard():
 	to_load = None
 	
 	if session['role'] == 'Logistics Officer':
-		sql = "SELECT t.req_fk,a.asset_tag,s.fac_pk,d.fac_pk,r.approved_dt FROM transits AS t INNER JOIN requests AS r ON t.req_fk = r.req_pk INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk;"
+		sql = "SELECT t.req_fk,a.asset_tag,s.fac_pk,d.fac_pk,r.approved_dt FROM transits AS t INNER JOIN requests AS r ON t.req_fk = r.req_pk INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk WHERE t.unload_dt is NULL;"
 		lres = query(sql,())
 		ltasks = list()
 		for r in lres:
@@ -255,25 +255,22 @@ def update_transit():
 		session['msg'] = 'Only Logistics Officers May make Updates Transits.'
 		return redirect('dashboard')
 	if request.method=='GET':
-		req_fk=request.form['req_pk']
-		sql = "SELECT load_dt,unload_dt FROM transit WHERE req_fk = %s;"
-		transit = query(sql,(req_fk,))
-		if not (transit):
-			session['msg'] = 'ERROR: transit entry not found'
-			return redirect('dashboard')
-		if transit[1] != null:
-			session['msg'] = 'transit has already been unloaded'
-			return render_template('dashboard.html')
-		columns=[('Transit ID'), ('Asset Tag'), ('Source Facilitiy'), ('Destination Facility'), ('Request Date')]
-		sql = "SELECT requests.req_pk, assests.asset_tag, requests.source_fk, requests.destination.fk, requests.submit_dt FROM requests inner join assets on requests.asset_fk = assets.asset_pk inner join facilities on facilities.fac_pk=request.fac_fk WHERE requests.approved = 'False' AND requests.req_tag=%s;"
-		transit_data = query(sql,(req_fk,))
-		return render_template('update_transit.html', columns = columns, transit_data = transit_data)
+		session['req_fk'] = int(request.args['id'])
+		sql = "SELECT r.req_pk,a.asset_tag,s.fac_name,d.fac_name,r.submit_dt FROM requests AS r INNER JOIN assets AS a ON r.asset_fk = a.asset_pk INNER JOIN facilities AS s ON s.fac_pk = r.source_fk INNER JOIN facilities AS d ON d.fac_pk = r.destination_fk WHERE r.req_pk = %s;"
+		req_data = query(sql,(session['req_fk'],))
+		res=dict()
+		res['id']=req_data[0][0]
+		res['tag']=req_data[0][1]
+		res['src']=req_data[0][2]
+		res['dst']=req_data[0][3]
+		res['date']=req_data[0][4]
+		data = res 
+		return render_template('update_transit.html',data=data)
 	if request.method=='POST':
-		req_fk=request.form['req_fk']
 		load = request.form['load']
 		unload = request.form['unload']
-		sql = "UPDATE transits SET load_dt = '%s', unload_dt='%s' where req_fk = %s;"
-		query(sql,(req_fk,load,unload))
+		sql = "UPDATE transits SET load_dt = %s, unload_dt=%s where req_fk = %s;"
+		query(sql,(load,unload,session['req_fk']))
 		session['msg'] = 'Transit Request Updated!'
 		return redirect('dashboard')
 @app.route('/asset_report', methods=['GET','POST'])
