@@ -8,11 +8,13 @@ CREATE TABLE users (
 	user_pk serial primary key,
 	username varchar(16),
 	password varchar(16),
-	role_fk integer REFERENCES roles(role_pk)
+	role_fk integer REFERENCES roles(role_pk),
+	active boolean
 );
 --I have now added a pk to users for requests
 --sessons will use the username not an integer id.
 --The varchar feilds are corresponding to the assignemnt instructions "no longer than 16 characters"
+--the active boolean will keep track of 
 
 
 CREATE TABLE facilities (
