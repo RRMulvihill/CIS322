@@ -45,30 +45,54 @@ def login():
 		else:
 			session['msg'] = 'Error! User does not exist'
 			return redirect('login.html')
-@app.route('/create_user', methods=['GET', 'POST'])
-def create_user():
-	if request.method =='GET':
-		session['msg'] = ''
-		return render_template('create_user.html')
-	if request.method == 'POST':
-		session['entry_type'] = "User"
-		username = request.form['uname']
-		password = request.form['pass']
-		role = request.form['role']
+@app.route('/activate_user', methods=('POST',))
+def activate_user():
+	if request.method=='POST' and 'arguments' in request.form:
+		req=json.loads(request.form['arguments'])
+		dat = dict()
+		dat['username'] = req['username']
+		dat['password'] = req['password']
+		dat['role'] = req['role']
+		
+		res = dict()
+		
 		sql = ("SELECT username FROM users WHERE username = %s;")
 		user = query(sql,(username,))
 		if (user):
-			session['msg'] = 'ERROR: User Exists'
-			return redirect('create_user')
+			res['result'] = 'The Username submitted already exists, please submit a unique Username'
+			
 		else:
-			#get role_fk
 			sql = "SELECT role_pk FROM roles WHERE role = %s;"
-			role_fk = query(sql,(role,))
-			sql = "INSERT INTO users(username,password,role_fk) VALUES (%s, %s, %s);"
+			role_fk = query(sql,(dat['role'],))
+			sql = "INSERT INTO users(username,password,role_fk) VALUES (%s, %s, %s, TRUE);"
 			query(sql,(username,password,role_fk[0][0]))
 			session['user'] = username
-			session['msg'] = 'User Created!'
-			return redirect('login')
+			res['result'] = 'User Created!'
+			
+		data = json.dumps(res)
+		return data
+
+@app.route('/revoke_user', methods=('POST',))
+def revoke_user:
+	if request.method=='POST' and 'arguements' in request.form:
+		req = json.loads(requests.form['arguments'])
+		dat = dict()
+		dat['username'] = res['username']
+		
+		sql = ("SELECT username FROM users WHERE username = %s;")
+		user = query(sql,(dat['username'],))
+		res = dict()
+		if (user):
+			sql = 'UPDATE users SET active = FALSE WHERE username = %s'
+			query(sql,(dat['username'],))
+			res['result'] = 'User revoked!'
+		else:
+			res['result'] = 'User not found!'
+			
+		data = json.dumps(res)
+		return data
+		
+	
 @app.route('/add_facility', methods=['GET', 'POST'])
 def add_facility():
 	if request.method =='GET':
