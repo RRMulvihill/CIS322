@@ -14,7 +14,6 @@ def main():
     
     # Prep the arguments blob
     args = dict()
-    args['timestamp'] = datetime.datetime.utcnow().isoformat()
     args['username']  = sys.argv[2]
 
     # Print a message to let the user know what is being tried
