@@ -36,9 +36,12 @@ def login():
 		sql = "SELECT user_pk FROM users WHERE username = %s;"
 		session['user_pk'] = query(sql,(username,))[0][0]
 		password = request.form['pass']
-		sql = ("SELECT username,password FROM users WHERE username = %s and password = %s;")
+		sql = ("SELECT activate FROM users WHERE username = %s and password = %s;")
 		res = query(sql,(username,password))
 		if (res):
+			if res[0][0] == 'False':
+				session['msg'] = 'Error! User not active'
+				return redirect('login.html')
 			sql = ("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = %s;")
 			session['role'] = query(sql,(username,))[0][0]
 			return redirect('dashboard')
@@ -59,12 +62,16 @@ def activate_user():
 		sql = ("SELECT username FROM users WHERE username = %s;")
 		user = query(sql,(username,))
 		if (user):
-			res['result'] = 'The Username submitted already exists, please submit a unique Username'
+			sql = "SELECT role_pk FROM roles WHERE role = %s;"
+			role_fk = query(sql,(dat['role'],))
+			sql= "Update users SET password = %s, role_fk = %s, activate = TRUE;"
+			query(sql,(dat['password'],role_fk[0][0]))
+			res['result'] = 'User has been activated! The Username already exists, if the password and role were changed when unput, they have been updated to match.'
 			
 		else:
 			sql = "SELECT role_pk FROM roles WHERE role = %s;"
 			role_fk = query(sql,(dat['role'],))
-			sql = "INSERT INTO users(username,password,role_fk) VALUES (%s, %s, %s, TRUE);"
+			sql = "INSERT INTO users(username,password,role_fk,active) VALUES (%s, %s, %s, TRUE);"
 			query(sql,(username,password,role_fk[0][0]))
 			session['user'] = username
 			res['result'] = 'User Created!'
