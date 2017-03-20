@@ -108,7 +108,6 @@ def add_asset():
 	if request.method =='GET':
 		return render_template('add_asset.html')
 	if request.method == 'POST':
-		session['entry_type'] = "Asset"
 		asset_tag = request.form['tag']
 		description = request.form['desc']
 		date = request.form['date']
@@ -121,8 +120,8 @@ def add_asset():
 		else:
 			sql = "SELECT fac_pk FROM facilities where fac_code = %s;"
 			fac_fk = (query(sql,(fac_code,)))
-			sql = "INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES (%s, %s,%s,%s);"
-			query(sql,(asset_tag,description,fac_fk[0][0],'FALSE'))
+			sql = "INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES (%s, %s,%s,False);"
+			query(sql,(asset_tag,description,fac_fk[0][0]))
 			session['msg'] = 'asset created!'
 			return redirect('dashboard')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
