@@ -80,7 +80,7 @@ def activate_user():
 		return data
 
 @app.route('/revoke_user', methods=('POST',))
-def revoke_user:
+def revoke_user():
 	if request.method=='POST' and 'arguements' in request.form:
 		req = json.loads(requests.form['arguments'])
 		dat = dict()
