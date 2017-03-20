@@ -42,6 +42,7 @@ def login():
 		if (res):
 			print(res[0][1])
 			if res[0][1] == 'False':
+				print('user is revoked')
 				session['msg'] = 'Error! User not active'
 				return rendirect('login')
 			session['user_pk'] = res[0][0]
