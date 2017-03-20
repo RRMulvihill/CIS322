@@ -28,7 +28,6 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if request.method =='GET':
-		session['msg'] = ''
 		return render_template('login.html')
 	if request.method == 'POST':
 		username = request.form['uname']
