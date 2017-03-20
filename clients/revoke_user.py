@@ -17,7 +17,6 @@ def main():
     print("Revoking user: %s"%args['username'])
 
     data = urlencode(args)
-    print("sending:\n%s"%data)
     
     # Make the resquest
     path = sys.argv[1] + 'revoke_user'
