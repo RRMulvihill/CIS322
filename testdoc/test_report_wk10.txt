@@ -1,0 +1,95 @@
+Developer: Riley Mulvihill
+Tester: Cole Vikupitz
+GitHub Repo: https://github.com/WellDressedMan/CIS322
+
+Test Plan Results:
+
+1.  --PASS
+2.  --PASS
+3.  --PASS
+4.  --PASS
+5.  --PASS
+
+* For steps 1-5, I have a script that does all of the setup steps for me. Installs and runs with no issues.
+
+6.  --PASS
+7.  --PASS
+8.  --PASS
+9.  --PASS
+10. --PASS
+11. --PASS
+12. --PASS
+13. --PASS
+
+14. --FAIL
+
+* This is form the error log:
+[Sun Mar 19 19:41:30.603395 2017] [wsgi:error] [pid 1427:tid 140663987361536] [client 10.0.2.2:53503]     tag = query(sql,(asset_tag)), referer: http://127.0.0.1:8080/add_asset
+[Sun Mar 19 19:41:30.603403 2017] [wsgi:error] [pid 1427:tid 140663987361536] [client 10.0.2.2:53503]   File "/home/osnapdev/wsgi/app.py", line 16, in query, referer: http://127.0.0.1:8080/add_asset
+[Sun Mar 19 19:41:30.603411 2017] [wsgi:error] [pid 1427:tid 140663987361536] [client 10.0.2.2:53503]     cur.execute(sql,params), referer: http://127.0.0.1:8080/add_asset
+[Sun Mar 19 19:41:30.603438 2017] [wsgi:error] [pid 1427:tid 140663987361536] [client 10.0.2.2:53503] TypeError: not all arguments converted during string formatting, referer: http://127.0.0.1:8080/add_asset
+* There also does not seem to be a date in the assets table, maybe this also causes the error?
+
+15. --FAIL
+
+* Cannot create any assets due to the error from step 14.
+* I've manually entered the assets into the database via psql, so testing on other features from here won't depend on this test.
+  
+16. --PASS
+17. --PASS
+18. --PASS
+19. --PASS
+20. --PASS
+21. --PASS
+22. --PASS
+23. --PASS
+24. --PASS
+
+* Cannot test without the ability to make transfers.
+
+25. --FAIL
+
+* This is from the error log:
+[Sun Mar 19 19:54:17.660049 2017] [wsgi:error] [pid 1540:tid 140663903434496] [client 10.0.2.2:53638]   File "/home/osnapdev/wsgi/app.py", line 117, in dispose_asset, referer: http://127.0.0.1:8080/dashboard
+[Sun Mar 19 19:54:17.660071 2017] [wsgi:error] [pid 1540:tid 140663903434496] [client 10.0.2.2:53638]     for asset in res[0]:, referer: http://127.0.0.1:8080/dashboard
+[Sun Mar 19 19:54:17.660090 2017] [wsgi:error] [pid 1540:tid 140663903434496] [client 10.0.2.2:53638] IndexError: list index out of range, referer: http://127.0.0.1:8080/dashboard
+[Sun Mar 19 19:54:17.660160 2017] [wsgi:error] [pid 1540:tid 140663903434496] [client 10.0.2.2:53638] , referer: http://127.0.0.1:8080/dashboard
+
+26. --PASS
+27. --PASS
+
+28. --FAIL
+
+* The list of options in the dropbox is empty.
+
+29. --FAIL
+
+* No link back to the dashboard.
+
+30. --FAIL
+31. --FAIL
+
+* Transfer report missing.
+
+32. -- FAIL
+
+* No logout from the dashboard.
+
+
+
+**********************************************************************************************
+Most of the features in the application are implemented and work well. The only big thing to fix is the add assets page. This is
+because adding asset is vital to have any other working features in the application (i.e. No asset report w/o assets). 
+
+Other suggestions I have is to add placeholders in your text boxes for the desired format. For example, if the user needs to enter
+a date, maybe put something like 'MM/DD/YYYY' inside so that users know how to enter the input. This is only because there are different
+ways dates and times may be entered (although you included that in the test plan which is good). This also may be why the add asset
+page failed (I didn't enter the date right maybe).
+
+You also may want to add links in your screens to return to the dashboard/login.
+
+Overall, everything else works as expected. Code is organized and easy to read. Messages are unique and helpful as well.
+
+Also, Riley seems cool and attractive. I should set him up with my hot friend (if I had any).
+
+
