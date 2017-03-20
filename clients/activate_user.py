@@ -23,7 +23,7 @@ def main():
     # Setup the data to send
     sargs = dict()
     sargs['arguments']=json.dumps(args)
-    data = urlencode(sargs)
+    data = urlencode(args)
     print("sending:\n%s"%data)
     
     # Make the resquest
