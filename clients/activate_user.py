@@ -27,7 +27,8 @@ def main():
     print("sending:\n%s"%data)
     
     # Make the resquest
-    req = Request(sys.argv[1],data.encode('ascii'),method='POST')
+    path = sys.argv[1] + 'create_user'
+    req = Request(path,data.encode('ascii'),method='POST')
     res = urlopen(req)
     
     # Parse the response
