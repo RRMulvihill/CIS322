@@ -5,7 +5,7 @@ import json
 from urllib.request import Request, urlopen
 from urllib.parse   import urlencode
 
-main()
+def main():
     # Check the CLI arguments
     if len(sys.argv) !=5 :
         print("Usage: python3 %s <url> <username> <password> <role>"%sys.argv[0])
@@ -28,7 +28,7 @@ main()
     data = urlencode(args)
 
     # Print a message to let the user know what is being tried
-    print("Activating user: %s pass: %s role: %s"%args['username'],args['password'],args['role'])
+    #print("Activating user: %s pass: %s role: %s"%args['username'],args['password'],args['role'])
     
     # Make the resquest
     path = sys.argv[1] + 'activate_user'
