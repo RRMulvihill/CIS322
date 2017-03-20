@@ -11,3 +11,4 @@ cd ..
 
 # Install the wsgi files
 cp -R src/* $HOME/wsgi
+cp -R clients/* $HOME/wsgi
