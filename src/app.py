@@ -42,14 +42,14 @@ def login():
 		if (res):
 			if res[0][1] == 'False':
 				session['msg'] = 'Error! User not active'
-				return redirect('login')
+				return render_template('login.html')
 			session['user_pk'] = res[0][0]
 			sql = ("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = %s;")
 			session['role'] = query(sql,(username,))[0][0]
 			return redirect('dashboard')
 		else:
 			session['msg'] = 'Error! User does not exist'
-			return redirect('login')
+			return render_template('login.html')
 @app.route('/activate_user', methods=('POST',))
 def activate_user():
 	if request.method=='POST' and 'arguments' in request.form:
