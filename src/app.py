@@ -41,7 +41,7 @@ def login():
 		res = query(sql,(username,password))
 		if (res):
 			print(res[0][1])
-			if res[0][1] == 'False':
+			if res[0][1] == False:
 				print('user is revoked')
 				session['msg'] = 'Error! User not active'
 				return rendirect('login')
