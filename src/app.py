@@ -55,27 +55,23 @@ def activate_user():
 	if request.method=='POST' and 'arguments' in request.form:
 		req=json.loads(request.form['arguments'])
 		dat = dict()
-		dat['username'] = req['username']
+		dat['password'],dat['role'] = req['username']
 		dat['password'] = req['password']
 		dat['role'] = req['role']
 		
 		res = dict()
 		
 		sql = ("SELECT username FROM users WHERE username = %s;")
-		user = query(sql,(username,))
+		user = query(sql,(dat['username'],))
 		if (user):
-			sql = "SELECT role_pk FROM roles WHERE role = %s;"
-			role_fk = query(sql,(dat['role'],))
 			sql= "Update users SET password = %s, role_fk = %s, active = TRUE;"
-			query(sql,(dat['password'],role_fk[0][0]))
+			query(sql,(dat['password'],dat['role']))
 			res['result'] = 'User has been activated! The Username already exists, if the password and role were changed when unput, they have been updated to match.'
 			
 		else:
-			sql = "SELECT role_pk FROM roles WHERE role = %s;"
-			role_fk = query(sql,(dat['role'],))
+
 			sql = "INSERT INTO users(username,password,role_fk,active) VALUES (%s, %s, %s, TRUE);"
-			query(sql,(username,password,role_fk[0][0]))
-			session['user'] = username
+			query(sql,(dat['username'],dat['password'],dat['role']))
 			res['result'] = 'User Created!'
 			
 		data = json.dumps(res)
