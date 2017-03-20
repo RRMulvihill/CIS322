@@ -52,30 +52,23 @@ def login():
 			return render_template('login.html')
 @app.route('/activate_user', methods=('POST',))
 def activate_user():
-	if request.method=='POST' and 'arguments' in request.form:
-		req=request.form['arguments']
-		dat = dict()
-		dat['username'] = req['username']
-		dat['password'] = req['password']
-		dat['role'] = req['role']
-		
-		res = dict()
+	if request.method=='POST':
+		username= request.form['username']
+		password= requset.form['password']
+		role = request.form['role']
 		
 		sql = ("SELECT username FROM users WHERE username = %s;")
-		user = query(sql,(dat['username'],))
+		user = query(sql,(username,))
 		if (user):
-			sql= "Update users SET password = %s, role_fk = %s, active = TRUE;"
-			query(sql,(dat['password'],dat['role']))
-			res['result'] = 'User has been activated! The Username already exists, if the password and role were changed when unput, they have been updated to match.'
+			sql= "Update users SET password = %s, role_fk = %s, active = TRUE WHERE username = %s;"
+			query(sql,(password,role, username))
+			return 'User has been activated! The Username already exists, if the password and role were changed when unput, they have been updated to match.'
 			
 		else:
 
 			sql = "INSERT INTO users(username,password,role_fk,active) VALUES (%s, %s, %s, TRUE);"
-			query(sql,(dat['username'],dat['password'],dat['role']))
-			res['result'] = 'User Created!'
-			
-		data = json.dumps(res)
-		return data
+			query(sql,(username,password,role))
+			return 'User Created!'
 
 @app.route('/revoke_user', methods=('POST',))
 def revoke_user():
