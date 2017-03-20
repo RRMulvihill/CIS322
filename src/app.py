@@ -72,23 +72,16 @@ def activate_user():
 
 @app.route('/revoke_user', methods=('POST',))
 def revoke_user():
-	if request.method=='POST' and 'arguements' in request.form:
-		req = json.loads(requests.form['arguments'])
-		dat = dict()
-		dat['username'] = res['username']
-		
+	if request.method=='POST':
+		username = request.form['username']
 		sql = ("SELECT username FROM users WHERE username = %s;")
-		user = query(sql,(dat['username'],))
-		res = dict()
+		user = query(sql,(username,))
 		if (user):
 			sql = 'UPDATE users SET active = FALSE WHERE username = %s'
-			query(sql,(dat['username'],))
-			res['result'] = 'User revoked!'
+			query(sql,(username,))
+			return 'User revoked!'
 		else:
-			res['result'] = 'User not found!'
-			
-		data = json.dumps(res)
-		return data
+			return 'User not found!'
 		
 	
 @app.route('/add_facility', methods=['GET', 'POST'])
