@@ -40,7 +40,7 @@ def login():
 		sql = ("SELECT user_pk, active FROM users WHERE username = %s and password = %s;")
 		res = query(sql,(username,password))
 		if (res):
-			print(res)
+			print(res[0][1])
 			if res[0][1] == 'False':
 				session['msg'] = 'Error! User not active'
 				return render_template('login.html')
