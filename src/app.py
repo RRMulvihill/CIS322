@@ -54,7 +54,7 @@ def login():
 def activate_user():
 	if request.method=='POST':
 		username= request.form['username']
-		password= requset.form['password']
+		password= request.form['password']
 		role = request.form['role']
 		
 		sql = ("SELECT username FROM users WHERE username = %s;")
