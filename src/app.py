@@ -32,16 +32,18 @@ def login():
 		return render_template('login.html')
 	if request.method == 'POST':
 		username = request.form['uname']
-		session['username'] = username
-		sql = "SELECT user_pk FROM users WHERE username = %s;"
-		session['user_pk'] = query(sql,(username,))[0][0]
 		password = request.form['pass']
-		sql = ("SELECT activate FROM users WHERE username = %s and password = %s;")
+		session['username'] = username
+		#sql = "SELECT user_pk FROM users WHERE username = %s;"
+		#session['user_pk'] = query(sql,(username,))[0][0]
+
+		sql = ("SELECT user_pk, active FROM users WHERE username = %s and password = %s;")
 		res = query(sql,(username,password))
 		if (res):
-			if res[0][0] == 'False':
+			if res[0][1] == 'False':
 				session['msg'] = 'Error! User not active'
 				return redirect('login.html')
+			session['user_pk'] = res[0][0]
 			sql = ("SELECT role FROM roles JOIN users ON roles.role_pk = users.role_fk WHERE users.username = %s;")
 			session['role'] = query(sql,(username,))[0][0]
 			return redirect('dashboard')
@@ -64,7 +66,7 @@ def activate_user():
 		if (user):
 			sql = "SELECT role_pk FROM roles WHERE role = %s;"
 			role_fk = query(sql,(dat['role'],))
-			sql= "Update users SET password = %s, role_fk = %s, activate = TRUE;"
+			sql= "Update users SET password = %s, role_fk = %s, active = TRUE;"
 			query(sql,(dat['password'],role_fk[0][0]))
 			res['result'] = 'User has been activated! The Username already exists, if the password and role were changed when unput, they have been updated to match.'
 			
