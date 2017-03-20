@@ -1,0 +1,26 @@
+OSNAP Test Results
+Initially I failed every step, getting an internal server error, , I ran your debugger on app, it seems as if the database needs to be 'hw'? Once I did this I could proceed, I had been using a database named 'lost' 
+
+1. Create New User
+PASS 'successfully activated the user guest1'
+2.Logging in
+PASS
+3. Adding a facility
+PASS
+4.Adding asset
+PASS, good catch on replicating asset tags
+5.Dispose of Asset
+PASS, facility officers were blocked correctly
+*The asset I deleted was still shown in the Add an Asset table*
+6.1Making a Transfer Request
+PASS
+6.2 approving request
+PASS
+6.3 update transfer
+Pass!
+7. View Asset Report
+Pass
+8.view Transfer Report
+Pass
+
+This is an outstanding application! Hands down the best I have seen from all the coding reviews. I love the custom images, and your indebth readme's and user instructions. I would double check that using a database called 'hw' is ok
