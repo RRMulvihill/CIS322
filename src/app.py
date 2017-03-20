@@ -53,9 +53,9 @@ def login():
 @app.route('/activate_user', methods=('POST',))
 def activate_user():
 	if request.method=='POST' and 'arguments' in request.form:
-		req=json.loads(request.form['arguments'])
+		req=request.form['arguments']
 		dat = dict()
-		dat['password'],dat['role'] = req['username']
+		dat['username'] = req['username']
 		dat['password'] = req['password']
 		dat['role'] = req['role']
 		
