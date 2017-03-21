@@ -1,13 +1,19 @@
 <html>
 	<title>Add an Asset</title>
+	<left><a href="{{url_for('dashboard')}}">Return to the dashboard</a></left>
 	<body><h2>Add an Asset</h2>
 		<p>Please Enter the Following</p>
     <p>asset tag, asset description, date, and facility code</p>
 		<form action="{{url_for('add_asset')}}" method="POST">
 			<input type="txt" name="tag"/>
 			<input type="txt" name="desc"/>
-     			<input type="txt" name="date"/>
-      			<input type="txt" name="fac"/>
+     			<input type="txt" name="date" placeholder = MM/DD/YYYY/>
+      			<select required name="facility">
+				<option value="">None</option>
+				{% for fac in facilities %}
+				<option value={{fac}}> {{ fac }} </option>
+				{% endfor %}
+			</select><br>
 			<input type="submit" name="submit" />	
 		</form>
 	</body>
