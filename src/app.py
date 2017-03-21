@@ -142,11 +142,11 @@ def dispose_asset():
 			session['msg'] = 'Asset not found!'
 			return redirect('dashboard') 
 		else:
-			if tag[1] == 'True':
+			if tag[0][1] == 'True':
 				session['msg'] = 'Error! Asset already disposed'
 				return ridirect('dashboard')
 			sql = "UPDATE assets SET disposed = 'TRUE' WHERE asset_tag = %s;"
-			query(sql,(tag,))
+			query(sql,(tag[0][0],))
 			session['msg'] = 'Asset removed'
 			return redirect('dashboard')
 @app.route('/dashboard', methods=['GET',])
