@@ -113,21 +113,23 @@ def add_asset():
 	if request.method == 'POST':
 		print('method = post')
 		asset_tag = request.form['tag']
-		print(tag)
+		print(asset_tag)
 		description = request.form['desc']
 		print(description)
 		date = request.form['date']
 		print(date)
 		fac_code = request.form['fac']
-		print(fac)
+		print(fac_code)
 		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
 		tag = query(sql,(asset_tag))
 		if (tag):
+			print('tag exists')
 			session['msg'] = 'asset already exists with the given tag'
 			return redirect('dashboard')
 		else:
 			sql = "SELECT fac_pk FROM facilities where fac_code = %s;"
 			fac_fk = query(sql,(fac_code,))
+			print(fac_fk)
 			query(sql,(asset_tag,date, description,fac_fk))
 			session['msg'] = 'asset created!'
 			return redirect('dashboard')  
