@@ -5,6 +5,7 @@
 		<h2>Asset Report</h2>
 		<p>Wow, such Assets!</p>
 			<form action="{{url_for('asset_report')}}" method="POST">
+			<input type="txt" name="date" placeholder = MM/DD/YYYY>
 			<select required name="facility">
 				<option value="All">All</option>
 				{% for fac in facilities %}
