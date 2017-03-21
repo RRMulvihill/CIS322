@@ -113,7 +113,7 @@ def add_asset():
 	if request.method == 'POST':
 		print('method = post')
 		asset_tag = request.form['tag']
-		print(asset_tag)
+		print(type(asset_tag))
 		description = request.form['desc']
 		print(description)
 		date = request.form['date']
