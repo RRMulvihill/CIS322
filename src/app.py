@@ -300,6 +300,10 @@ def asset_report():
 	if request.method == 'POST':
 		facility=request.form['facility']
 		date = request.form['date']
+		if date == '':
+			sql = "SELECT a.asset_tag, a.date, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk;"
+			report = query(sql,())
+			return render_template('asset_report.html', facilities=facilities,report = report)
 		if (facility=='All'):
 			sql = "SELECT a.asset_tag, a.date, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk WHERE a.date = %s;"
 			report = query(sql,(date,))
