@@ -1,6 +1,8 @@
 <html>
 <title>asset report</title>
-	<body><h2>Asset Report</h2>
+	<body>
+		<left><a href="{{url_for('dashboard')}}">Return to the dashboard</a></left>
+		<h2>Asset Report</h2>
 		<p>Wow, such Assets!</p>
 			<form action="{{url_for('asset_report')}}" method="POST">
 			<select name='facility'>
