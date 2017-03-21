@@ -1,12 +1,8 @@
 <html>
 	<body><h2>Dispose Asset</h2>
 	<left><a href="{{url_for('dashboard')}}">Return to the dashboard</a></left>
-  <p>enter an asset tag </p>
+  	<p>enter an asset tag </p>
 
-		Assets:<br>
-		{% for asset in assets %}
-			<h4>{{asset}}</h4>
-		{% endfor %}
 		<br>
 		<form action="{{url_for('dispose_asset')}}" method="POST">
 			Asset Tag<br>
