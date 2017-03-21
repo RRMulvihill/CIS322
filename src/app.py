@@ -313,7 +313,7 @@ def asset_report():
 def transfer_report():
 	return render_template('transfer_report.html')
 
-@app.rout('/logout', methods=['GET','POST'])
+@app.route('/logout', methods=['GET','POST'])
 def logout():
 	session['username'] = ''
 	session['role'] = ''
