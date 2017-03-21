@@ -120,7 +120,8 @@ def add_asset():
 		print(date)
 		fac_code = request.form['facility']
 		print(fac_code)
-		sql = "SELECT asset_tag FROM assets WHERE asset_tag = '%s';"
+		print("SELECT asset_tag FROM assets WHERE asset_tag = %s;"%asset_tag)
+		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
 		tag = query(sql,(asset_tag))
 		if (tag):
 			print('tag exists')
@@ -130,7 +131,7 @@ def add_asset():
 			sql = "SELECT fac_pk FROM facilities where fac_code = %s;"
 			fac_fk = query(sql,(fac_code,))
 			print(fac_fk[0][0])
-			sql = "INSERT INTO assets (asset_tag,date,description,fac_fk,disposed) VALUES ('%s',%s,%s,%s,False);"
+			sql = "INSERT INTO assets (asset_tag,date,description,fac_fk,disposed) VALUES (%s,%s,%s,%s,False);"
 			query(sql,(asset_tag,date, description,fac_fk[0][0]))
 			session['msg'] = 'asset created!'
 			return redirect('dashboard')  
