@@ -27,6 +27,7 @@ CREATE TABLE facilities (
 CREATE TABLE assets (
 	asset_pk serial primary key,
 	asset_tag varchar(16),
+	date timestamp,
 	description text,
 	fac_fk integer REFERENCES facilities(fac_pk),
 	disposed boolean
