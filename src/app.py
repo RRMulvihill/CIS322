@@ -292,9 +292,9 @@ def update_transit():
 		return redirect('dashboard')
 @app.route('/asset_report', methods=['GET','POST'])
 def asset_report():
+	sql = "SELECT fac_code FROM facilities;"
+	facilities = query(sql,())
 	if request.method =='GET':
-		sql = "SELECT fac_code FROM facilities;"
-		facilities = query(sql,())
 		blank=[]
 		return render_template('asset_report.html', facilities=facilities,report =blank)
 	if request.method == 'POST':
