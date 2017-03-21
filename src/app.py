@@ -306,7 +306,7 @@ def asset_report():
 			return render_template('asset_report.html', facilities=facilities,report = report)
 		else:
 			sql = "SELECT a.asset_tag, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk WHERE f.fac_code = %s;"
-			report = query(sql,(facility))
+			report = query(sql,(facility,))
 			return render_template('asset_report.html', facilities=facilities, report = report)
 @app.route('/transfer_report', methods=['GET','POST'])
 def transfer_report():
