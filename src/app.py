@@ -173,8 +173,10 @@ def dashboard():
 			e['id']=r[0]
 			e['tag']=r[1]
 			sql = "SELECT fac_code FROM facilities WHERE fac_pk = %s;"
-			e['src']=query(sql,(r[2],))
-			e['dst']=query(sql,(r[3],))
+			src = query(sql,(r[2],))
+			e['src']=src[0][0]
+			dst = query(sql,(r[3],))
+			e['dst']=dst[0][0]
 			e['date']=r[4]
 			ftasks.append(e)
 		to_approve = ftasks
