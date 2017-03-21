@@ -163,6 +163,7 @@ def dashboard():
 			src = query(sql,(r[2],))
 			e['src']=src[0][0]
 			dst = query(sql,(r[3],))
+			e['dst']=dst[0][0]
 			e['date']=r[4]
 			ltasks.append(e)
 		to_load = ltasks
