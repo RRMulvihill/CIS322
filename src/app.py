@@ -120,7 +120,7 @@ def add_asset():
 		print(date)
 		fac_code = request.form['facility']
 		print(fac_code)
-		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
+		sql = "SELECT asset_tag FROM assets WHERE asset_tag = '%s';"
 		tag = query(sql,(asset_tag))
 		if (tag):
 			print('tag exists')
