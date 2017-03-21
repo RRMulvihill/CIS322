@@ -4,8 +4,8 @@
 		<p>{{session['msg']}}</p>
 		<p>Enter User</p>
 		<form action="{{url_for('login')}}" method="POST">
-			<input type="txt" name="uname">
-			<input type="password" name="pass"/>
+			<input type="txt" name="uname" placeholder='username'>
+			<input type="password" name="pass" placeholder = 'password/>
 			<input type="submit" name="submit"/>
 		</form>
 
