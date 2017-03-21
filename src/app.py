@@ -159,8 +159,10 @@ def dashboard():
 			e = dict()
 			e['id']=r[0]
 			e['tag']=r[1]
-			e['src']=r[2]
-			e['dst']=r[3]
+			sql = "SELECT fac_code FROM facilities WHERE fac_pk = %s;"
+			src = query(sql,(r[2],))
+			e['src']=src[0][0]
+			dst = query(sql,(r[3],))
 			e['date']=r[4]
 			ltasks.append(e)
 		to_load = ltasks
