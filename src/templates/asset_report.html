@@ -5,13 +5,12 @@
 		<h2>Asset Report</h2>
 		<p>Wow, such Assets!</p>
 			<form action="{{url_for('asset_report')}}" method="POST">
-			<select name='facility'>
-				<option name='facility' value="0" SELECTED>All</option>
-				{% for facility in facilities %}
-					<option name='facility' value="{{facility[0]}}" SELECTED>{{facility[1]}}</option>
+			<select required name="facility">
+				<option value="">None</option>
+				{% for fac in facilities %}
+				<option value={{fac[0]}}> {{ fac[0] }} </option>
 				{% endfor %}
-			</select>
-			<br />
+			</select><br>
 			<input type="submit" value="Report" name="submit" />
 		</form>
 		<table style="width:100%">
