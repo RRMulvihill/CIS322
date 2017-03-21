@@ -111,10 +111,15 @@ def add_asset():
 		print(facilities)
 		return render_template('add_asset.html', facilities = facilities)
 	if request.method == 'POST':
+		print('method = post')
 		asset_tag = request.form['tag']
+		print(tag)
 		description = request.form['desc']
+		print(description)
 		date = request.form['date']
+		print(date)
 		fac_code = request.form['fac']
+		print(fac)
 		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
 		tag = query(sql,(asset_tag))
 		if (tag):
