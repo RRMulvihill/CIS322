@@ -298,15 +298,15 @@ def asset_report():
 		facility=request.form['facility']
 		date = request.form['date']
 		if date == '':
-			sql = "SELECT a.asset_tag, a.date, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk;"
+			sql = "SELECT a.asset_tag, a.date, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk WHERE a.disposed = False;"
 			report = query(sql,())
 			return render_template('asset_report.html', facilities=facilities,report = report)
 		if (facility=='All'):
-			sql = "SELECT a.asset_tag, a.date, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk WHERE a.date = %s;"
+			sql = "SELECT a.asset_tag, a.date, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk WHERE a.date = %s AND a.disposed = false;"
 			report = query(sql,(date,))
 			return render_template('asset_report.html', facilities=facilities,report = report)
 		else:
-			sql = "SELECT a.asset_tag, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk WHERE f.fac_code = %s AND a.date = %s;"
+			sql = "SELECT a.asset_tag, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk WHERE f.fac_code = %s AND a.date = %s AND a.disposed = false;"
 			report = query(sql,(facility,date))
 			return render_template('asset_report.html', facilities=facilities, report = report)
 @app.route('/transfer_report', methods=['GET','POST'])
