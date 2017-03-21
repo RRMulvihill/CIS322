@@ -312,5 +312,14 @@ def asset_report():
 @app.route('/transfer_report', methods=['GET','POST'])
 def transfer_report():
 	return render_template('transfer_report.html')
+
+@app.rout('/logout', methods=['GET','POST'])
+def logout():
+	session['username'] = ''
+	session['role'] = ''
+	session['user_pk'] = ''
+	session['msg'] = ''
+	return render_template('logout.html')
+
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8080)
