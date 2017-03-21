@@ -1,5 +1,6 @@
 <html>
 	<body><h1>Welcome To LOST</h1>
+		<right><a href="{{url_for('logout')}}">Logout</a></right>
 		<p>username: {{session['username']}}</p>
 		<p>user_pk = {{session['user_pk']}}</p>
 		<p>role: {{session['role']}}</p>
