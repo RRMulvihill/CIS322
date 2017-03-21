@@ -108,29 +108,20 @@ def add_asset():
 	if request.method =='GET':
 		sql = "SELECT fac_code FROM facilities;"
 		facilities = query(sql,())
-		print(facilities)
 		return render_template('add_asset.html', facilities = facilities)
 	if request.method == 'POST':
-		print('method = post')
 		asset_tag = request.form['tag']
-		print(asset_tag)
 		description = request.form['desc']
-		print(description)
 		date = request.form['date']
-		print(date)
 		fac_code = request.form['facility']
-		print(fac_code)
 		print("SELECT asset_tag FROM assets WHERE asset_tag = %s;"%asset_tag)
-		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
 		tag = query(sql,(asset_tag,))
 		if (tag):
-			print('tag exists')
 			session['msg'] = 'asset already exists with the given tag'
 			return redirect('dashboard')
 		else:
 			sql = "SELECT fac_pk FROM facilities where fac_code = %s;"
 			fac_fk = query(sql,(fac_code,))
-			print(fac_fk[0][0])
 			sql = "INSERT INTO assets (asset_tag,date,description,fac_fk,disposed) VALUES (%s,%s,%s,%s,False);"
 			query(sql,(asset_tag,date, description,fac_fk[0][0]))
 			session['msg'] = 'asset created!'
@@ -301,9 +292,9 @@ def update_transit():
 		return redirect('dashboard')
 @app.route('/asset_report', methods=['GET','POST'])
 def asset_report():
-	sql = "SELECT fac_name FROM facilities;"
-	facilities = query(sql,())
 	if request.method =='GET':
+		sql = "SELECT fac_code FROM facilities;"
+		facilities = query(sql,())
 		blank=[]
 		return render_template('asset_report.html', facilities=facilities,report =blank)
 	if request.method == 'POST':
