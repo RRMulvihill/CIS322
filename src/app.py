@@ -109,7 +109,7 @@ def add_asset():
 		sql = "SELECT fac_code FROM facilities;"
 		facilities = query(sql,())
 		print(facilities)
-		return render_template('add_asset.html', facilities = facilities)
+		return render_template('add_asset.html', facilities = facilities[0])
 	if request.method == 'POST':
 		asset_tag = request.form['tag']
 		description = request.form['desc']
