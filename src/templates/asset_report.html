@@ -6,7 +6,7 @@
 		<p>Wow, such Assets!</p>
 			<form action="{{url_for('asset_report')}}" method="POST">
 			<select required name="facility">
-				<option value="">None</option>
+				<option value="All">All</option>
 				{% for fac in facilities %}
 				<option value={{fac[0]}}> {{ fac[0] }} </option>
 				{% endfor %}
