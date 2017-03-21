@@ -130,7 +130,7 @@ def add_asset():
 			sql = "SELECT fac_pk FROM facilities where fac_code = %s;"
 			fac_fk = query(sql,(fac_code,))
 			print(fac_fk)
-			query(sql,(asset_tag,date, description,fac_fk))
+			query(sql,(asset_tag,date, description,fac_fk[0][0]))
 			session['msg'] = 'asset created!'
 			return redirect('dashboard')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
