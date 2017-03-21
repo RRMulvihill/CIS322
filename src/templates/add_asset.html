@@ -11,7 +11,7 @@
       			<select required name="facility">
 				<option value="">None</option>
 				{% for fac in facilities %}
-				<option value={{fac}}> {{ fac }} </option>
+				<option value={{fac[0]}}> {{ fac[0] }} </option>
 				{% endfor %}
 			</select><br>
 			<input type="submit" name="submit" />	
