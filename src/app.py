@@ -128,26 +128,23 @@ def add_asset():
 			return redirect('dashboard')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
 def dispose_asset():
-	sql = "SELECT * FROM assets WHERE disposed = 'FALSE';"
-	res = query(sql,())
-	assets = []
-	for asset in res[0]:
-		assets.append("{}: {}".format(asset[1], asset[2]))
-	#return render_template('dispose_asset.html', assets=assets)
 	if session['role'] != "Logistics Officer":
 		session['msg'] = 'Error! Access Denied for non Logistics Officers'
-		return render_template('dashboard.html')
+		return ridirect('dashboard')
 	if request.method =='GET':
 		return render_template('dispose_asset.html')
 	if request.method == 'POST':
-		session['entry_type'] = "asset"
 		asset_tag = request.form['tag']
-		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
-		tag_exists = query(sql,(asset_tag,))
-		if not (tag_exists):
+		sql = "SELECT asset_pk, disposed FROM assets WHERE asset_tag = %s;"
+		tag = query(sql,(asset_tag,))
+		print(tag)
+		if not (tag):
 			session['msg'] = 'Asset not found!'
 			return redirect('dashboard') 
 		else:
+			if tag[1] == 'True':
+				session['msg'] = 'Error! Asset already disposed'
+				return ridirect('dashboard')
 			sql = "UPDATE assets SET disposed = 'TRUE' WHERE asset_tag = %s;"
 			query(sql,(tag,))
 			session['msg'] = 'Asset removed'
