@@ -33,15 +33,12 @@ def login():
 		username = request.form['uname']
 		password = request.form['pass']
 		session['username'] = username
-		#sql = "SELECT user_pk FROM users WHERE username = %s;"
-		#session['user_pk'] = query(sql,(username,))[0][0]
-
+		
 		sql = ("SELECT user_pk, active FROM users WHERE username = %s and password = %s;")
 		res = query(sql,(username,password))
 		if (res):
 			print(res[0][1])
 			if res[0][1] == False:
-				print('user is revoked')
 				session['msg'] = 'Error! User not active'
 				return redirect('login')
 			session['user_pk'] = res[0][0]
@@ -49,7 +46,7 @@ def login():
 			session['role'] = query(sql,(username,))[0][0]
 			return redirect('dashboard')
 		else:
-			session['msg'] = 'Error! User does not exist'
+			session['msg'] = 'Error! User does not exist or password is invalid'
 			return redirect('login')
 @app.route('/activate_user', methods=('POST',))
 def activate_user():
