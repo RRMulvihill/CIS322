@@ -112,7 +112,7 @@ def add_asset():
 		return render_template('add_asset.html', facilities = facilities)
 	if request.method == 'POST':
 		print('method = post')
-		asset_tag = request.form['tag']
+		asset_tag = str(request.form['tag'])
 		print(asset_tag)
 		description = request.form['desc']
 		print(description)
