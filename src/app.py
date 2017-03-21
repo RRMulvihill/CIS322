@@ -106,7 +106,10 @@ def add_facility():
 @app.route('/add_asset', methods=['GET', 'POST'])
 def add_asset():
 	if request.method =='GET':
-		return render_template('add_asset.html')
+		sql = "SELECT fac_code FROM facilities;"
+		facilities = query(sql,())
+		print(facilities)
+		return render_template('add_asset.html', facilities = facilities)
 	if request.method == 'POST':
 		asset_tag = request.form['tag']
 		description = request.form['desc']
@@ -119,9 +122,8 @@ def add_asset():
 			return redirect('dashboard')
 		else:
 			sql = "SELECT fac_pk FROM facilities where fac_code = %s;"
-			fac_fk = (query(sql,(fac_code,)))
-			sql = "INSERT INTO assets(asset_tag,description,fac_fk,disposed) VALUES (%s, %s,%s,False);"
-			query(sql,(asset_tag,description,fac_fk[0][0]))
+			fac_fk = query(sql,(fac_code,))
+			query(sql,(asset_tag,date, description,fac_fk))
 			session['msg'] = 'asset created!'
 			return redirect('dashboard')  
 @app.route('/dispose_asset', methods=['GET', 'POST'])
@@ -298,7 +300,7 @@ def asset_report():
 	if request.method == 'POST':
 		facility=request.form['facility']
 		if (facility=='0'):
-			sql = "SELECT a.asset_tag, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk;"
+			sql = "SELECT a.asset_tag, a.date, a.description, f.fac_name FROM assets AS a INNER JOIN facilities AS f ON a.fac_fk = f.fac_pk;"
 			report = query(sql,())
 			return render_template('asset_report.html', facilities=facilities,report = report)
 		else:
