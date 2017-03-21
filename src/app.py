@@ -122,7 +122,7 @@ def add_asset():
 		print(fac_code)
 		print("SELECT asset_tag FROM assets WHERE asset_tag = %s;"%asset_tag)
 		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
-		tag = query(sql,(asset_tag))
+		tag = query(sql,(asset_tag,))
 		if (tag):
 			print('tag exists')
 			session['msg'] = 'asset already exists with the given tag'
