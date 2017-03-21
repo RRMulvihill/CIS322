@@ -135,7 +135,7 @@ def dispose_asset():
 		return render_template('dispose_asset.html')
 	if request.method == 'POST':
 		asset_tag = request.form['tag']
-		sql = "SELECT asset_pk, disposed FROM assets WHERE asset_tag = %s;"
+		sql = "SELECT asset_tag, disposed FROM assets WHERE asset_tag = %s;"
 		tag = query(sql,(asset_tag,))
 		print(tag)
 		if not (tag):
