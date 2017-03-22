@@ -111,7 +111,7 @@ def add_asset():
 		description = request.form['desc']
 		date = request.form['date']
 		fac_code = request.form['facility']
-		print("SELECT asset_tag FROM assets WHERE asset_tag = %s;"%asset_tag)
+		sql = "SELECT asset_tag FROM assets WHERE asset_tag = %s;"
 		tag = query(sql,(asset_tag,))
 		if (tag):
 			session['msg'] = 'asset already exists with the given tag'
