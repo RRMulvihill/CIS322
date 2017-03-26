@@ -255,6 +255,7 @@ def approve_req():
 			print('approved')
 			sql = "UPDATE requests SET approved ='TRUE' WHERE req_pk = %s;"
 			query(sql,(session['req_pk'],))
+			print(sql = "INSERT INTO transits(req_fk) VALUES (%s);")
 			sql = "INSERT INTO transits(req_fk) VALUES (%s);"
 			query(sql,(session['req_pk'],))
 			session['msg'] = 'request approved'
