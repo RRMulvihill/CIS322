@@ -290,6 +290,7 @@ def update_transit():
 		sql = "UPDATE transits SET load_dt = %s, unload_dt=%s where req_fk = %s;"
 		query(sql,(load,unload,session['req_fk']))
 		sql = "SELECT fac_pk FROM facilities WHERE fac_code = %s;"
+		print(session['dst'])
 		dest_fk = query(sql,(session['dst'],))
 		sql = "UPDATE assets SET fac_fk = %s;"
 		query(sql,(dest_fk,))
