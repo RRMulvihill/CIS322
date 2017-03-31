@@ -294,7 +294,7 @@ def update_transit():
 		dest_fk = query(sql,(session['dst'],))
 		print(dest_fk)
 		sql = "UPDATE assets SET fac_fk = %s;"
-		query(sql,(dest_fk,))
+		query(sql,(dest_fk[0][0],))
 		session['msg'] = 'Transit Request Updated!'
 		return redirect('dashboard')
 @app.route('/asset_report', methods=['GET','POST'])
