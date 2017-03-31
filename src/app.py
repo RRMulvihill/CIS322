@@ -280,6 +280,7 @@ def update_transit():
 		res['tag']=req_data[0][1]
 		res['src']=req_data[0][2]
 		res['dst']=req_data[0][3]
+		session['dst']=res['dst']
 		res['date']=req_data[0][4]
 		data = res 
 		return render_template('update_transit.html',data=data)
@@ -288,6 +289,10 @@ def update_transit():
 		unload = request.form['unload']
 		sql = "UPDATE transits SET load_dt = %s, unload_dt=%s where req_fk = %s;"
 		query(sql,(load,unload,session['req_fk']))
+		sql = "SELECT fac_pk FROM facilites WHERE fac_code = %s;"
+		dest_fk = query(sql,(session['dst'],)
+		sql = "UPDATE assets SET fac_fk = %s;"
+		query(sql,(dest_fk,)
 		session['msg'] = 'Transit Request Updated!'
 		return redirect('dashboard')
 @app.route('/asset_report', methods=['GET','POST'])
