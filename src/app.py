@@ -292,6 +292,7 @@ def update_transit():
 		sql = "SELECT fac_pk FROM facilities WHERE fac_code = %s;"
 		print(session['dst'])
 		dest_fk = query(sql,(session['dst'],))
+		print(dest_fk)
 		sql = "UPDATE assets SET fac_fk = %s;"
 		query(sql,(dest_fk,))
 		session['msg'] = 'Transit Request Updated!'
