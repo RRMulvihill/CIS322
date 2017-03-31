@@ -289,7 +289,7 @@ def update_transit():
 		unload = request.form['unload']
 		sql = "UPDATE transits SET load_dt = %s, unload_dt=%s where req_fk = %s;"
 		query(sql,(load,unload,session['req_fk']))
-		sql = "SELECT fac_pk FROM facilities WHERE fac_code = %s;"
+		sql = "SELECT fac_pk FROM facilities WHERE fac_name = %s;"
 		print(session['dst'])
 		dest_fk = query(sql,(session['dst'],))
 		print(dest_fk)
